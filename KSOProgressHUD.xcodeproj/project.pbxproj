@@ -15,7 +15,7 @@
 /* Begin PBXFileReference section */
 		071AAA632067061E00240014 /* KSOProgressHUD.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = KSOProgressHUD.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		071AAA662067061E00240014 /* KSOProgressHUD.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KSOProgressHUD.h; sourceTree = "<group>"; };
-		071AAA672067061E00240014 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		071AAA672067061E00240014 /* KSOProgressHUD-iOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "KSOProgressHUD-iOS-Info.plist"; sourceTree = "<group>"; };
 		071AAA6F206706E000240014 /* KSOProgressHUDView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KSOProgressHUDView.h; sourceTree = "<group>"; };
 		071AAA70206706E000240014 /* KSOProgressHUDView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KSOProgressHUDView.m; sourceTree = "<group>"; };
 		071AAA732067071A00240014 /* KSOProgressHUD-Info.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KSOProgressHUD-Info.h"; sourceTree = "<group>"; };
@@ -70,7 +70,7 @@
 		071AAA6E2067068E00240014 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				071AAA672067061E00240014 /* Info.plist */,
+				071AAA672067061E00240014 /* KSOProgressHUD-iOS-Info.plist */,
 				071AAA732067071A00240014 /* KSOProgressHUD-Info.h */,
 			);
 			name = "Supporting Files";
@@ -91,9 +91,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		071AAA622067061E00240014 /* KSOProgressHUD */ = {
+		071AAA622067061E00240014 /* KSOProgressHUD-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 071AAA692067061E00240014 /* Build configuration list for PBXNativeTarget "KSOProgressHUD" */;
+			buildConfigurationList = 071AAA692067061E00240014 /* Build configuration list for PBXNativeTarget "KSOProgressHUD-iOS" */;
 			buildPhases = (
 				071AAA5E2067061E00240014 /* Sources */,
 				071AAA5F2067061E00240014 /* Frameworks */,
@@ -105,7 +105,7 @@
 			);
 			dependencies = (
 			);
-			name = KSOProgressHUD;
+			name = "KSOProgressHUD-iOS";
 			productName = KSOProgressHUD;
 			productReference = 071AAA632067061E00240014 /* KSOProgressHUD.framework */;
 			productType = "com.apple.product-type.framework";
@@ -136,7 +136,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				071AAA622067061E00240014 /* KSOProgressHUD */,
+				071AAA622067061E00240014 /* KSOProgressHUD-iOS */,
 			);
 		};
 /* End PBXProject section */
@@ -247,11 +247,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_FILE = KSOProgressHUD/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/KSOProgressHUD/KSOProgressHUD-iOS-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "$(SRCROOT)/KSOProgressHUD/KSOProgressHUD-Info.h";
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -314,11 +314,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_FILE = KSOProgressHUD/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/KSOProgressHUD/KSOProgressHUD-iOS-Info.plist";
 				INFOPLIST_PREFIX_HEADER = "$(SRCROOT)/KSOProgressHUD/KSOProgressHUD-Info.h";
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kosoku.ksoprogresshud;
@@ -344,7 +344,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		071AAA692067061E00240014 /* Build configuration list for PBXNativeTarget "KSOProgressHUD" */ = {
+		071AAA692067061E00240014 /* Build configuration list for PBXNativeTarget "KSOProgressHUD-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				071AAA6A2067061E00240014 /* Debug */,
