@@ -1,0 +1,3 @@
+[submodule "Vendor/Ditko"]
+	path = Vendor/Ditko
+	url = https://github.com/Kosoku/Ditko.git
