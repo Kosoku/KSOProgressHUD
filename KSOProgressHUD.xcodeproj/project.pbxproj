@@ -174,7 +174,9 @@
 		071AAA582067058700240014 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				CLASSPREFIX = KSO;
 				LastUpgradeCheck = 0920;
+				ORGANIZATIONNAME = "Kosoku Interactive, LLC.";
 				TargetAttributes = {
 					071AAA622067061E00240014 = {
 						CreatedOnToolsVersion = 9.2;
