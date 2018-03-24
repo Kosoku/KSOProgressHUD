@@ -15,6 +15,9 @@
 
 #import "ViewController.h"
 
+#import <KSOProgressHUD/KSOProgressHUD.h>
+#import <Ditko/Ditko.h>
+
 @interface ViewController ()
 
 @end
@@ -23,14 +26,38 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
+    
+    UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:CGRectZero];
+    
+    scrollView.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    [self.view addSubview:scrollView];
+    
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view]|" options:0 metrics:nil views:@{@"view": scrollView}]];
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[view]|" options:0 metrics:nil views:@{@"view": scrollView}]];
+    
+    KDIGradientView *backgroundView = [[KDIGradientView alloc] initWithFrame:CGRectZero];
+    
+    backgroundView.translatesAutoresizingMaskIntoConstraints = NO;
+    backgroundView.colors = @[KDIColorRandomRGB(),
+                              KDIColorRandomRGB(),
+                              KDIColorRandomRGB(),
+                              KDIColorRandomRGB()];
+    
+    [scrollView addSubview:backgroundView];
+    
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view]|" options:0 metrics:nil views:@{@"view": backgroundView}]];
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[view(==height)]|" options:0 metrics:@{@"height": @(CGRectGetHeight(UIScreen.mainScreen.nativeBounds))} views:@{@"view": backgroundView}]];
+    [NSLayoutConstraint activateConstraints:@[[backgroundView.widthAnchor constraintEqualToAnchor:scrollView.widthAnchor]]];
+    
+    KSOProgressHUDView *HUDView = [[KSOProgressHUDView alloc] initWithFrame:CGRectZero];
+    
+    [HUDView startAnimating];
+    
+    [self.view addSubview:HUDView];
+    
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view]|" options:0 metrics:nil views:@{@"view": HUDView}]];
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[view]|" options:0 metrics:nil views:@{@"view": HUDView}]];
 }
-
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
 
 @end

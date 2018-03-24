@@ -17,4 +17,7 @@
 
 @interface KSOProgressHUDView : UIView
 
+- (void)startAnimating;
+- (void)stopAnimating;
+
 @end
