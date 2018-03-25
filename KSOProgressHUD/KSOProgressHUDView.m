@@ -33,8 +33,10 @@
     self.translatesAutoresizingMaskIntoConstraints = NO;
     self.backgroundColor = UIColor.clearColor;
     
-    _blurEffectView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleLight]];
+    _blurEffectView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleProminent]];
     _blurEffectView.translatesAutoresizingMaskIntoConstraints = NO;
+    _blurEffectView.KDI_cornerRadius = 5.0;
+    _blurEffectView.layer.masksToBounds = YES;
     [self addSubview:_blurEffectView];
     
     _vibrancyEffectView = [[UIVisualEffectView alloc] initWithEffect:[UIVibrancyEffect effectForBlurEffect:(UIBlurEffect *)_blurEffectView.effect]];

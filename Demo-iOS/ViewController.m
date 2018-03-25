@@ -39,15 +39,19 @@
     KDIGradientView *backgroundView = [[KDIGradientView alloc] initWithFrame:CGRectZero];
     
     backgroundView.translatesAutoresizingMaskIntoConstraints = NO;
-    backgroundView.colors = @[KDIColorRandomRGB(),
-                              KDIColorRandomRGB(),
-                              KDIColorRandomRGB(),
-                              KDIColorRandomRGB()];
+    
+    NSMutableArray *colors = [[NSMutableArray alloc] init];
+    
+    for (NSUInteger i=0; i<10; i++) {
+        [colors addObject:KDIColorRandomRGB()];
+    }
+    
+    backgroundView.colors = colors;
     
     [scrollView addSubview:backgroundView];
     
     [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view]|" options:0 metrics:nil views:@{@"view": backgroundView}]];
-    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[view(==height)]|" options:0 metrics:@{@"height": @(CGRectGetHeight(UIScreen.mainScreen.nativeBounds))} views:@{@"view": backgroundView}]];
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[view(==height)]|" options:0 metrics:@{@"height": @(ceil(CGRectGetHeight(UIScreen.mainScreen.bounds) * 2.5))} views:@{@"view": backgroundView}]];
     [NSLayoutConstraint activateConstraints:@[[backgroundView.widthAnchor constraintEqualToAnchor:scrollView.widthAnchor]]];
     
     KSOProgressHUDView *HUDView = [[KSOProgressHUDView alloc] initWithFrame:CGRectZero];
