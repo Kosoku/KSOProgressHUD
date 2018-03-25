@@ -15,7 +15,27 @@
 
 #import <UIKit/UIKit.h>
 
+typedef NS_ENUM(NSInteger, KSOProgressHUDViewBlurEffectStyle) {
+    KSOProgressHUDViewBlurEffectStyleNone = NSIntegerMin,
+    KSOProgressHUDViewBlurEffectStyleExtraLight = UIBlurEffectStyleExtraLight,
+    KSOProgressHUDViewBlurEffectStyleLight = UIBlurEffectStyleLight,
+    KSOProgressHUDViewBlurEffectStyleDark = UIBlurEffectStyleDark,
+#if (TARGET_OS_TV)
+    KSOProgressHUDViewBlurEffectStyleExtraDark = UIBlurEffectStyleExtraDark,
+#endif
+    KSOProgressHUDViewBlurEffectStyleRegular = UIBlurEffectStyleRegular,
+    KSOProgressHUDViewBlurEffectStyleProminent = UIBlurEffectStyleProminent
+};
+
 @interface KSOProgressHUDView : UIView
+
+@property (assign,nonatomic) KSOProgressHUDViewBlurEffectStyle blurEffectStyle UI_APPEARANCE_SELECTOR;
+@property (assign,nonatomic) BOOL wantsVibrancyEffect UI_APPEARANCE_SELECTOR;
+
++ (instancetype)progressHUDView;
+
++ (void)present;
++ (void)dismiss;
 
 - (void)startAnimating;
 - (void)stopAnimating;

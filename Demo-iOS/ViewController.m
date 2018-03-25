@@ -17,12 +17,20 @@
 
 #import <KSOProgressHUD/KSOProgressHUD.h>
 #import <Ditko/Ditko.h>
+#import <KSOFontAwesomeExtensions/KSOFontAwesomeExtensions.h>
+#import <Stanley/Stanley.h>
+
+static CGSize const kBarButtonItemImageSize = {.width=25, .height=25};
 
 @interface ViewController ()
 
 @end
 
 @implementation ViewController
+
+- (NSString *)title {
+    return @"KSOProgressHUD";
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -43,7 +51,7 @@
     NSMutableArray *colors = [[NSMutableArray alloc] init];
     
     for (NSUInteger i=0; i<10; i++) {
-        [colors addObject:KDIColorRandomRGB()];
+        [colors addObject:KDIColorRandomHSB()];
     }
     
     backgroundView.colors = colors;
@@ -51,17 +59,14 @@
     [scrollView addSubview:backgroundView];
     
     [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view]|" options:0 metrics:nil views:@{@"view": backgroundView}]];
-    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[view(==height)]|" options:0 metrics:@{@"height": @(ceil(CGRectGetHeight(UIScreen.mainScreen.bounds) * 2.5))} views:@{@"view": backgroundView}]];
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[view(==height)]|" options:0 metrics:@{@"height": @(ceil(CGRectGetHeight(UIScreen.mainScreen.bounds) * 3))} views:@{@"view": backgroundView}]];
     [NSLayoutConstraint activateConstraints:@[[backgroundView.widthAnchor constraintEqualToAnchor:scrollView.widthAnchor]]];
     
-    KSOProgressHUDView *HUDView = [[KSOProgressHUDView alloc] initWithFrame:CGRectZero];
-    
-    [HUDView startAnimating];
-    
-    [self.view addSubview:HUDView];
-    
-    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view]|" options:0 metrics:nil views:@{@"view": HUDView}]];
-    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[view]|" options:0 metrics:nil views:@{@"view": HUDView}]];
+    self.navigationItem.rightBarButtonItems = @[[UIBarButtonItem KDI_barButtonItemWithImage:[UIImage KSO_fontAwesomeSolidImageWithString:@"\uf070" size:kBarButtonItemImageSize].KDI_templateImage style:UIBarButtonItemStylePlain block:^(__kindof UIBarButtonItem * _Nonnull barButtonItem) {
+        [KSOProgressHUDView dismiss];
+    }],[UIBarButtonItem KDI_barButtonItemWithImage:[UIImage KSO_fontAwesomeSolidImageWithString:@"\uf06e" size:kBarButtonItemImageSize].KDI_templateImage style:UIBarButtonItemStylePlain block:^(__kindof UIBarButtonItem * _Nonnull barButtonItem) {
+        [KSOProgressHUDView present];
+    }]];
 }
 
 @end

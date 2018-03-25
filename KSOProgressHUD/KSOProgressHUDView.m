@@ -16,24 +16,33 @@
 #import "KSOProgressHUDView.h"
 
 #import <Ditko/Ditko.h>
+#import <KSOFontAwesomeExtensions/KSOFontAwesomeExtensions.h>
 
 @interface KSOProgressHUDView ()
+
 @property (strong,nonatomic) UIVisualEffectView *blurEffectView;
 @property (strong,nonatomic) UIVisualEffectView *vibrancyEffectView;
+
+@property (strong,nonatomic) UIStackView *stackView;
+@property (strong,nonatomic) UIImageView *imageView;
+@property (strong,nonatomic) UIProgressView *progressView;
 @property (strong,nonatomic) UIActivityIndicatorView *activityIndicatorView;
+@property (strong,nonatomic) UILabel *label;
 @end
 
 @implementation KSOProgressHUDView
-
+#pragma mark *** Subclass Overrides ***
 - (instancetype)initWithFrame:(CGRect)frame {
     if (!(self = [super initWithFrame:frame]))
         return nil;
+    
+    _blurEffectStyle = KSOProgressHUDViewBlurEffectStyleNone;
     
     self.userInteractionEnabled = NO;
     self.translatesAutoresizingMaskIntoConstraints = NO;
     self.backgroundColor = UIColor.clearColor;
     
-    _blurEffectView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleProminent]];
+    _blurEffectView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleDark]];
     _blurEffectView.translatesAutoresizingMaskIntoConstraints = NO;
     _blurEffectView.KDI_cornerRadius = 5.0;
     _blurEffectView.layer.masksToBounds = YES;
@@ -43,21 +52,47 @@
     _vibrancyEffectView.translatesAutoresizingMaskIntoConstraints = NO;
     [_blurEffectView.contentView addSubview:_vibrancyEffectView];
     
+    _stackView = [[UIStackView alloc] initWithFrame:CGRectZero];
+    _stackView.translatesAutoresizingMaskIntoConstraints = NO;
+    _stackView.axis = UILayoutConstraintAxisVertical;
+    _stackView.alignment = UIStackViewAlignmentCenter;
+    _stackView.spacing = 8.0;
+    [_vibrancyEffectView.contentView addSubview:_stackView];
+    
+    _imageView = [[UIImageView alloc] initWithFrame:CGRectZero];
+    _imageView.translatesAutoresizingMaskIntoConstraints = NO;
+    _imageView.image = [UIImage KSO_fontAwesomeSolidImageWithString:@"\uf00c" size:CGSizeMake(25, 25)].KDI_templateImage;
+    [_stackView addArrangedSubview:_imageView];
+    
     _activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     _activityIndicatorView.translatesAutoresizingMaskIntoConstraints = NO;
-    [_vibrancyEffectView.contentView addSubview:_activityIndicatorView];
+    _activityIndicatorView.hidesWhenStopped = YES;
+    [_stackView addArrangedSubview:_activityIndicatorView];
+    
+    _progressView = [[UIProgressView alloc] initWithFrame:CGRectZero];
+    _progressView.translatesAutoresizingMaskIntoConstraints = NO;
+//    _progressView.progress = 0.5;
+    [_stackView addArrangedSubview:_progressView];
+    
+    _label = [[UILabel alloc] initWithFrame:CGRectZero];
+    _label.translatesAutoresizingMaskIntoConstraints = NO;
+    _label.KDI_dynamicTypeTextStyle = UIFontTextStyleCallout;
+    _label.text = @"Loading…";
+    [_stackView addArrangedSubview:_label];
     
     return self;
 }
-
+#pragma mark -
 + (BOOL)requiresConstraintBasedLayout {
     return YES;
 }
 - (void)updateConstraints {
     NSMutableArray *temp = [[NSMutableArray alloc] init];
     
-    [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[view]-|" options:0 metrics:nil views:@{@"view": self.activityIndicatorView}]];
-    [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[view]-|" options:0 metrics:nil views:@{@"view": self.activityIndicatorView}]];
+    [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view]|" options:0 metrics:nil views:@{@"view": self.progressView}]];
+    
+    [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[view]-|" options:0 metrics:nil views:@{@"view": self.stackView}]];
+    [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[view]-|" options:0 metrics:nil views:@{@"view": self.stackView}]];
     
     [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view]|" options:0 metrics:nil views:@{@"view": self.vibrancyEffectView}]];
     [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[view]|" options:0 metrics:nil views:@{@"view": self.vibrancyEffectView}]];
@@ -70,7 +105,18 @@
     
     [super updateConstraints];
 }
-
+#pragma mark *** Public Methods ***
++ (instancetype)progressHUDView; {
+    return [[self alloc] initWithFrame:CGRectZero];
+}
+#pragma mark -
++ (void)present; {
+    
+}
++ (void)dismiss; {
+    
+}
+#pragma mark -
 - (void)startAnimating; {
     [self.activityIndicatorView startAnimating];
 }
