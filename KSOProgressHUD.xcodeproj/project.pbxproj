@@ -29,6 +29,9 @@
 		071AAAA320670BE000240014 /* KSOFontAwesomeExtensions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 071AAAA420670BE000240014 /* KSOFontAwesomeExtensions.framework */; };
 		071AAAA520670BE400240014 /* Loki.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 071AAAA620670BE400240014 /* Loki.framework */; };
 		071AAAA720670BE700240014 /* Stanley.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 071AAAA820670BE700240014 /* Stanley.framework */; };
+		071AAAAB20673DC900240014 /* Quicksilver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 071AAAAA20673DC900240014 /* Quicksilver.framework */; };
+		071AAAAC20673DC900240014 /* Quicksilver.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 071AAAAA20673DC900240014 /* Quicksilver.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		071AAAAD20673DD300240014 /* Quicksilver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 071AAAAE20673DD300240014 /* Quicksilver.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +54,7 @@
 				071AAA9120670BB100240014 /* Stanley.framework in Embed Frameworks */,
 				071AAA9820670BBC00240014 /* KSOFontAwesomeExtensions.framework in Embed Frameworks */,
 				071AAA9B20670BC400240014 /* Ditko.framework in Embed Frameworks */,
+				071AAAAC20673DC900240014 /* Quicksilver.framework in Embed Frameworks */,
 				071AAA9520670BB700240014 /* Loki.framework in Embed Frameworks */,
 				071AAA9D20670BCC00240014 /* KSOProgressHUD.framework in Embed Frameworks */,
 			);
@@ -83,6 +87,8 @@
 		071AAAA420670BE000240014 /* KSOFontAwesomeExtensions.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = KSOFontAwesomeExtensions.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		071AAAA620670BE400240014 /* Loki.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Loki.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		071AAAA820670BE700240014 /* Stanley.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Stanley.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		071AAAAA20673DC900240014 /* Quicksilver.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Quicksilver.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		071AAAAE20673DD300240014 /* Quicksilver.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Quicksilver.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +96,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				071AAAAD20673DD300240014 /* Quicksilver.framework in Frameworks */,
 				071AAAA720670BE700240014 /* Stanley.framework in Frameworks */,
 				071AAAA520670BE400240014 /* Loki.framework in Frameworks */,
 				071AAAA320670BE000240014 /* KSOFontAwesomeExtensions.framework in Frameworks */,
@@ -104,6 +111,7 @@
 				071AAA9020670BB100240014 /* Stanley.framework in Frameworks */,
 				071AAA9720670BBC00240014 /* KSOFontAwesomeExtensions.framework in Frameworks */,
 				071AAA9A20670BC400240014 /* Ditko.framework in Frameworks */,
+				071AAAAB20673DC900240014 /* Quicksilver.framework in Frameworks */,
 				071AAA9420670BB700240014 /* Loki.framework in Frameworks */,
 				071AAA9C20670BCC00240014 /* KSOProgressHUD.framework in Frameworks */,
 			);
@@ -177,6 +185,8 @@
 		071AAAA020670BD900240014 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				071AAAAA20673DC900240014 /* Quicksilver.framework */,
+				071AAAAE20673DD300240014 /* Quicksilver.framework */,
 				071AAA9920670BC400240014 /* Ditko.framework */,
 				071AAA9620670BBC00240014 /* KSOFontAwesomeExtensions.framework */,
 				071AAA9320670BB700240014 /* Loki.framework */,

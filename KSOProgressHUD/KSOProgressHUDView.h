@@ -15,6 +15,8 @@
 
 #import <UIKit/UIKit.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 typedef NS_ENUM(NSInteger, KSOProgressHUDViewBlurEffectStyle) {
     KSOProgressHUDViewBlurEffectStyleNone = NSIntegerMin,
     KSOProgressHUDViewBlurEffectStyleExtraLight = UIBlurEffectStyleExtraLight,
@@ -29,15 +31,22 @@ typedef NS_ENUM(NSInteger, KSOProgressHUDViewBlurEffectStyle) {
 
 @interface KSOProgressHUDView : UIView
 
+@property (class,readonly,nonatomic,nullable) __kindof KSOProgressHUDView *currentProgressHUDView;
+
 @property (assign,nonatomic) KSOProgressHUDViewBlurEffectStyle blurEffectStyle UI_APPEARANCE_SELECTOR;
 @property (assign,nonatomic) BOOL wantsVibrancyEffect UI_APPEARANCE_SELECTOR;
 
+@property (assign,nonatomic) float progress;
+- (void)setProgress:(float)progress animated:(BOOL)animated;
+
 + (instancetype)progressHUDView;
 
-+ (void)present;
++ (__kindof KSOProgressHUDView *)present;
 + (void)dismiss;
 
 - (void)startAnimating;
 - (void)stopAnimating;
 
 @end
+
+NS_ASSUME_NONNULL_END

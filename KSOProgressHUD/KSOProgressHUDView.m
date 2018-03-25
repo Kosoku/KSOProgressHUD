@@ -17,6 +17,7 @@
 
 #import <Ditko/Ditko.h>
 #import <KSOFontAwesomeExtensions/KSOFontAwesomeExtensions.h>
+#import <Quicksilver/Quicksilver.h>
 
 @interface KSOProgressHUDView ()
 
@@ -42,7 +43,7 @@
     self.translatesAutoresizingMaskIntoConstraints = NO;
     self.backgroundColor = UIColor.clearColor;
     
-    _blurEffectView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleDark]];
+    _blurEffectView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleExtraLight]];
     _blurEffectView.translatesAutoresizingMaskIntoConstraints = NO;
     _blurEffectView.KDI_cornerRadius = 5.0;
     _blurEffectView.layer.masksToBounds = YES;
@@ -71,7 +72,6 @@
     
     _progressView = [[UIProgressView alloc] initWithFrame:CGRectZero];
     _progressView.translatesAutoresizingMaskIntoConstraints = NO;
-//    _progressView.progress = 0.5;
     [_stackView addArrangedSubview:_progressView];
     
     _label = [[UILabel alloc] initWithFrame:CGRectZero];
@@ -110,11 +110,33 @@
     return [[self alloc] initWithFrame:CGRectZero];
 }
 #pragma mark -
-+ (void)present; {
++ (KSOProgressHUDView *)present; {
+    KSOProgressHUDView *view = KSOProgressHUDView.currentProgressHUDView;
     
+    if (view == nil) {
+        UIWindow *window = UIApplication.sharedApplication.windows.lastObject;
+        
+        view = [KSOProgressHUDView progressHUDView];
+        
+        [window addSubview:view];
+        
+        [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view]|" options:0 metrics:nil views:@{@"view": view}]];
+        [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[view]|" options:0 metrics:nil views:@{@"view": view}]];
+    }
+    
+    return view;
 }
 + (void)dismiss; {
+    [KSOProgressHUDView.currentProgressHUDView removeFromSuperview];
+}
+#pragma mark -
++ (KSOProgressHUDView *)currentProgressHUDView {
+    UIWindow *window = UIApplication.sharedApplication.windows.lastObject;
+    KSOProgressHUDView *view = [window.subviews KQS_find:^BOOL(__kindof UIView * _Nonnull object, NSInteger index) {
+        return [object isKindOfClass:KSOProgressHUDView.class];
+    }];
     
+    return view;
 }
 #pragma mark -
 - (void)startAnimating; {
@@ -122,6 +144,17 @@
 }
 - (void)stopAnimating; {
     [self.activityIndicatorView stopAnimating];
+}
+#pragma mark -
+@dynamic progress;
+- (float)progress {
+    return self.progressView.progress;
+}
+- (void)setProgress:(float)progress {
+    [self setProgress:progress animated:NO];
+}
+- (void)setProgress:(float)progress animated:(BOOL)animated; {
+    [self.progressView setProgress:progress animated:animated];
 }
 
 @end
