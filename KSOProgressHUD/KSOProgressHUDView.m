@@ -18,10 +18,11 @@
 #import <Ditko/Ditko.h>
 #import <KSOFontAwesomeExtensions/KSOFontAwesomeExtensions.h>
 #import <Quicksilver/Quicksilver.h>
+#import <Stanley/Stanley.h>
 
 @interface KSOProgressHUDView ()
 
-@property (strong,nonatomic) UIView *containerView;
+@property (strong,nonatomic) UIView *backgroundView;
 
 @property (strong,nonatomic) UIVisualEffectView *blurEffectView;
 @property (strong,nonatomic) UIVisualEffectView *vibrancyEffectView;
@@ -33,6 +34,7 @@
 @property (strong,nonatomic) UIActivityIndicatorView *activityIndicatorView;
 @property (strong,nonatomic) UILabel *label;
 
+@property (readonly,nonatomic) BOOL wantsVibrancyEffect;
 @property (readonly,nonatomic) UIColor *contentBackgroundColor;
 @property (readonly,nonatomic) UIColor *contentForegroundColor;
 
@@ -49,22 +51,13 @@
     if (!(self = [super initWithFrame:frame]))
         return nil;
     
+    _options = KSOProgressHUDViewOptionsAll;
     _style = KSOProgressHUDViewStyleLight;
     _contentCornerRadius = 5.0;
     
     self.userInteractionEnabled = NO;
     self.translatesAutoresizingMaskIntoConstraints = NO;
     self.backgroundColor = UIColor.clearColor;
-    
-//    _blurEffectView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleExtraLight]];
-//    _blurEffectView.translatesAutoresizingMaskIntoConstraints = NO;
-//    _blurEffectView.KDI_cornerRadius = kCornerRadius;
-//    _blurEffectView.layer.masksToBounds = YES;
-//    [_containerView addSubview:_blurEffectView];
-//
-//    _vibrancyEffectView = [[UIVisualEffectView alloc] initWithEffect:[UIVibrancyEffect effectForBlurEffect:(UIBlurEffect *)_blurEffectView.effect]];
-//    _vibrancyEffectView.translatesAutoresizingMaskIntoConstraints = NO;
-//    [_blurEffectView.contentView addSubview:_vibrancyEffectView];
     
     [self _updateSubviewHierarchy];
     
@@ -82,12 +75,23 @@
     [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[view]-|" options:0 metrics:nil views:@{@"view": self.stackView}]];
     [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[view]-|" options:0 metrics:nil views:@{@"view": self.stackView}]];
     
-    [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view]|" options:0 metrics:nil views:@{@"view": self.contentBackgroundView}]];
-    [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[view]|" options:0 metrics:nil views:@{@"view": self.contentBackgroundView}]];
+    if (self.blurEffectView != nil) {
+        [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view]|" options:0 metrics:nil views:@{@"view": self.blurEffectView}]];
+        [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[view]|" options:0 metrics:nil views:@{@"view": self.blurEffectView}]];
+        
+        if (self.vibrancyEffectView != nil) {
+            [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view]|" options:0 metrics:nil views:@{@"view": self.vibrancyEffectView}]];
+            [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[view]|" options:0 metrics:nil views:@{@"view": self.vibrancyEffectView}]];
+        }
+    }
+    else if (self.contentBackgroundView != nil) {
+        [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view]|" options:0 metrics:nil views:@{@"view": self.contentBackgroundView}]];
+        [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[view]|" options:0 metrics:nil views:@{@"view": self.contentBackgroundView}]];
+    }
     
-    [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|->=margin-[view]->=margin-|" options:0 metrics:@{@"margin": @0.0} views:@{@"view": self.containerView}]];
-    [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|->=margin-[view]->=margin-|" options:0 metrics:@{@"margin": @0.0} views:@{@"view": self.containerView}]];
-    [temp addObjectsFromArray:@[[self.containerView.centerXAnchor constraintEqualToAnchor:self.centerXAnchor],[self.containerView.centerYAnchor constraintEqualToAnchor:self.centerYAnchor]]];
+    [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|->=margin-[view]->=margin-|" options:0 metrics:@{@"margin": @0.0} views:@{@"view": self.backgroundView}]];
+    [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|->=margin-[view]->=margin-|" options:0 metrics:@{@"margin": @0.0} views:@{@"view": self.backgroundView}]];
+    [temp addObjectsFromArray:@[[self.backgroundView.centerXAnchor constraintEqualToAnchor:self.centerXAnchor],[self.backgroundView.centerYAnchor constraintEqualToAnchor:self.centerYAnchor]]];
     
     self.KDI_customConstraints = temp;
     
@@ -108,6 +112,15 @@
     [view setProgress:progress animated:animated];
 }
 #pragma mark -
+- (void)setOptions:(KSOProgressHUDViewOptions)options {
+    if (_options == options) {
+        return;
+    }
+    
+    _options = options;
+    
+    [self _updateSubviewHierarchy];
+}
 - (void)setStyle:(KSOProgressHUDViewStyle)style {
     if (_style == style) {
         return;
@@ -136,20 +149,33 @@
 }
 #pragma mark *** Private Methods ***
 - (void)_updateSubviewHierarchy; {
+    self.backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
+    
     switch (self.style) {
-        case KSOProgressHUDViewStyleLight:
         case KSOProgressHUDViewStyleDark:
-            self.containerView = [[UIView alloc] initWithFrame:CGRectZero];
+        case KSOProgressHUDViewStyleLight:
+            self.vibrancyEffectView = nil;
+            self.blurEffectView = nil;
+            
             self.contentBackgroundView = [[UIView alloc] initWithFrame:CGRectZero];
-            self.stackView = [[UIStackView alloc] initWithFrame:CGRectZero];
             break;
         default:
+            self.blurEffectView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:(UIBlurEffectStyle)self.style]];
+            
+            if (self.wantsVibrancyEffect) {
+                self.vibrancyEffectView = [[UIVisualEffectView alloc] initWithEffect:[UIVibrancyEffect effectForBlurEffect:(UIBlurEffect *)self.blurEffectView.effect]];
+            }
+            else {
+                self.vibrancyEffectView = nil;
+            }
             break;
     }
+    
+    self.stackView = [[UIStackView alloc] initWithFrame:CGRectZero];
 }
 #pragma mark Properties
 + (KSOProgressHUDView *)currentProgressHUDView {
-    return [KSOProgressHUDView.currentWindow.subviews KQS_find:^BOOL(__kindof UIView * _Nonnull object, NSInteger index) {
+    return [KSOProgressHUDView.currentWindow.subviews.KST_reversedArray KQS_find:^BOOL(__kindof UIView * _Nonnull object, NSInteger index) {
         return [object isKindOfClass:KSOProgressHUDView.class];
     }];
 }
@@ -181,16 +207,16 @@
     }];
 }
 #pragma mark -
-- (void)setContainerView:(UIView *)containerView {
-    [_containerView removeFromSuperview];
+- (void)setBackgroundView:(UIView *)backgroundView {
+    [_backgroundView removeFromSuperview];
     
-    _containerView = containerView;
+    _backgroundView = backgroundView;
     
-    if (_containerView != nil) {
-        _containerView.translatesAutoresizingMaskIntoConstraints = NO;
-        _containerView.backgroundColor = UIColor.clearColor;
+    if (_backgroundView != nil) {
+        _backgroundView.translatesAutoresizingMaskIntoConstraints = NO;
+        _backgroundView.backgroundColor = UIColor.clearColor;
         
-        [self addSubview:_containerView];
+        [self addSubview:_backgroundView];
     }
 }
 - (void)setContentBackgroundView:(UIView *)contentBackgroundView {
@@ -203,7 +229,31 @@
         _contentBackgroundView.backgroundColor = self.contentBackgroundColor;
         _contentBackgroundView.KDI_cornerRadius = self.contentCornerRadius;
         
-        [self.containerView addSubview:_contentBackgroundView];
+        [self.backgroundView addSubview:_contentBackgroundView];
+    }
+}
+- (void)setBlurEffectView:(UIVisualEffectView *)blurEffectView {
+    [_blurEffectView removeFromSuperview];
+    
+    _blurEffectView = blurEffectView;
+    
+    if (_blurEffectView != nil) {
+        _blurEffectView.translatesAutoresizingMaskIntoConstraints = NO;
+        _blurEffectView.KDI_cornerRadius = self.contentCornerRadius;
+        _blurEffectView.layer.masksToBounds = YES;
+        
+        [self.backgroundView addSubview:_blurEffectView];
+    }
+}
+- (void)setVibrancyEffectView:(UIVisualEffectView *)vibrancyEffectView {
+    [_vibrancyEffectView removeFromSuperview];
+    
+    _vibrancyEffectView = vibrancyEffectView;
+    
+    if (_vibrancyEffectView != nil) {
+        _vibrancyEffectView.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        [self.blurEffectView.contentView addSubview:_vibrancyEffectView];
     }
 }
 - (void)setStackView:(UIStackView *)stackView {
@@ -280,6 +330,9 @@
     }
 }
 #pragma mark -
+- (BOOL)wantsVibrancyEffect {
+    return self.options & KSOProgressHUDViewOptionsWantsVibrancyEffect;
+}
 - (UIColor *)contentBackgroundColor {
     switch (self.style) {
         case KSOProgressHUDViewStyleLight:

@@ -17,6 +17,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NS_OPTIONS(NSUInteger, KSOProgressHUDViewOptions) {
+    KSOProgressHUDViewOptionsNone = 0,
+    KSOProgressHUDViewOptionsWantsVibrancyEffect = 1 << 0,
+    KSOProgressHUDViewOptionsAll = KSOProgressHUDViewOptionsWantsVibrancyEffect
+};
+
 typedef NS_ENUM(NSInteger, KSOProgressHUDViewStyle) {
     KSOProgressHUDViewStyleLight = NSIntegerMin,
     KSOProgressHUDViewStyleDark,
@@ -32,8 +38,8 @@ typedef NS_ENUM(NSInteger, KSOProgressHUDViewStyle) {
 
 @interface KSOProgressHUDView : UIView
 
+@property (assign,nonatomic) KSOProgressHUDViewOptions options UI_APPEARANCE_SELECTOR;
 @property (assign,nonatomic) KSOProgressHUDViewStyle style UI_APPEARANCE_SELECTOR;
-@property (assign,nonatomic) BOOL wantsVibrancyEffect UI_APPEARANCE_SELECTOR;
 @property (assign,nonatomic) CGFloat contentCornerRadius UI_APPEARANCE_SELECTOR;
 
 @property (assign,nonatomic) float progress;

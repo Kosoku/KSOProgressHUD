@@ -20,14 +20,18 @@
 #import <KSOFontAwesomeExtensions/KSOFontAwesomeExtensions.h>
 #import <Stanley/Stanley.h>
 
+static CGFloat const kCornerRadius = 5.0;
 static CGSize const kBarButtonItemImageSize = {.width=25, .height=25};
 static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .right=8};
 
 @interface ViewController () <KDIPickerViewButtonDataSource,KDIPickerViewButtonDelegate>
+@property (strong,nonatomic) UIScrollView *scrollView;
 @property (strong,nonatomic) KDIPickerViewButton *stylePickerViewButton;
 @property (copy,nonatomic) NSArray<NSNumber *> *styles;
 
+- (UIView *)_createVibrancyViews;
 - (NSString *)_stringForStyle:(KSOProgressHUDViewStyle)style;
+- (void)_updateProgressHUDWithBlock:(dispatch_block_t)block;
 @end
 
 @implementation ViewController
@@ -49,14 +53,13 @@ static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .rig
     
     self.view.backgroundColor = UIColor.whiteColor;
     
-    UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:CGRectZero];
+    self.scrollView = [[UIScrollView alloc] initWithFrame:CGRectZero];
+    self.scrollView.translatesAutoresizingMaskIntoConstraints = NO;
     
-    scrollView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:self.scrollView];
     
-    [self.view addSubview:scrollView];
-    
-    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view]|" options:0 metrics:nil views:@{@"view": scrollView}]];
-    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[view]|" options:0 metrics:nil views:@{@"view": scrollView}]];
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view]|" options:0 metrics:nil views:@{@"view": self.scrollView}]];
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[view]|" options:0 metrics:nil views:@{@"view": self.scrollView}]];
     
     KDIGradientView *backgroundView = [[KDIGradientView alloc] initWithFrame:CGRectZero];
     
@@ -70,11 +73,11 @@ static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .rig
     
     backgroundView.colors = colors;
     
-    [scrollView addSubview:backgroundView];
+    [self.scrollView addSubview:backgroundView];
     
     [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view]|" options:0 metrics:nil views:@{@"view": backgroundView}]];
     [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[view(==height)]|" options:0 metrics:@{@"height": @(ceil(CGRectGetHeight(UIScreen.mainScreen.bounds) * 3))} views:@{@"view": backgroundView}]];
-    [NSLayoutConstraint activateConstraints:@[[backgroundView.widthAnchor constraintEqualToAnchor:scrollView.widthAnchor]]];
+    [NSLayoutConstraint activateConstraints:@[[backgroundView.widthAnchor constraintEqualToAnchor:self.scrollView.widthAnchor]]];
     
     self.stylePickerViewButton = [KDIPickerViewButton buttonWithType:UIButtonTypeSystem];
     self.stylePickerViewButton.translatesAutoresizingMaskIntoConstraints = NO;
@@ -84,10 +87,17 @@ static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .rig
     self.stylePickerViewButton.rounded = YES;
     self.stylePickerViewButton.dataSource = self;
     self.stylePickerViewButton.delegate = self;
-    [scrollView addSubview:self.stylePickerViewButton];
+    [self.scrollView addSubview:self.stylePickerViewButton];
     
     [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[view]" options:0 metrics:nil views:@{@"view": self.stylePickerViewButton}]];
     [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[view]" options:0 metrics:nil views:@{@"view": self.stylePickerViewButton}]];
+    
+    UIView *vibrancyView = [self _createVibrancyViews];
+    
+    [self.scrollView addSubview:vibrancyView];
+    
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[view]" options:0 metrics:nil views:@{@"view": vibrancyView}]];
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[top]-[view]" options:0 metrics:nil views:@{@"view": vibrancyView, @"top": self.stylePickerViewButton}]];
     
     self.navigationItem.rightBarButtonItems = @[[UIBarButtonItem KDI_barButtonItemWithImage:[UIImage KSO_fontAwesomeSolidImageWithString:@"\uf070" size:kBarButtonItemImageSize].KDI_templateImage style:UIBarButtonItemStylePlain block:^(__kindof UIBarButtonItem * _Nonnull barButtonItem) {
         [KSOProgressHUDView dismiss];
@@ -104,13 +114,67 @@ static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .rig
 }
 
 - (void)pickerViewButton:(KDIPickerViewButton *)pickerViewButton didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
-    [KSOProgressHUDView dismiss];
-    
-    KSOProgressHUDView.appearance.style = self.styles[row].integerValue;
-    
-    [KSOProgressHUDView present];
+    [self _updateProgressHUDWithBlock:^{
+        KSOProgressHUDView.appearance.style = self.styles[row].integerValue;
+    }];
 }
 
+- (UIView *)_createVibrancyViews; {
+    kstWeakify(self);
+    
+    UIView *backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
+    
+    backgroundView.translatesAutoresizingMaskIntoConstraints = NO;
+    backgroundView.backgroundColor = [self.view.tintColor KDI_contrastingColor];
+    backgroundView.KDI_cornerRadius = kCornerRadius;
+    
+    UIStackView *stackView = [[UIStackView alloc] initWithFrame:CGRectZero];
+    
+    stackView.translatesAutoresizingMaskIntoConstraints = NO;
+    stackView.axis = UILayoutConstraintAxisHorizontal;
+    stackView.alignment = UIStackViewAlignmentCenter;
+    stackView.spacing = 8.0;
+    
+    [backgroundView addSubview:stackView];
+    
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[view]-|" options:0 metrics:nil views:@{@"view": stackView}]];
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[view]-|" options:0 metrics:nil views:@{@"view": stackView}]];
+    
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
+    
+    label.translatesAutoresizingMaskIntoConstraints = NO;
+    label.textColor = [backgroundView.backgroundColor KDI_contrastingColor];
+    label.KDI_dynamicTypeTextStyle = UIFontTextStyleBody;
+    label.text = @"Vibrancy";
+    
+    [stackView addArrangedSubview:label];
+    
+    UISwitch *switchControl = [[UISwitch alloc] initWithFrame:CGRectZero];
+    
+    switchControl.translatesAutoresizingMaskIntoConstraints = NO;
+    switchControl.on = YES;
+    switchControl.onTintColor = self.view.tintColor;
+    switchControl.tintColor = label.textColor;
+    [switchControl KDI_addBlock:^(__kindof UIControl * _Nonnull control, UIControlEvents controlEvents) {
+        kstStrongify(self);
+        [self _updateProgressHUDWithBlock:^{
+            KSOProgressHUDViewOptions options = KSOProgressHUDView.appearance.options;
+            
+            if (switchControl.isOn) {
+                options |= KSOProgressHUDViewOptionsWantsVibrancyEffect;
+            }
+            else {
+                options &= ~KSOProgressHUDViewOptionsWantsVibrancyEffect;
+            }
+            
+            KSOProgressHUDView.appearance.options = options;
+        }];
+    } forControlEvents:UIControlEventValueChanged];
+    
+    [stackView addArrangedSubview:switchControl];
+    
+    return backgroundView;
+}
 - (NSString *)_stringForStyle:(KSOProgressHUDViewStyle)style; {
     switch (style) {
         case KSOProgressHUDViewStyleBlurExtraLight:
@@ -128,6 +192,13 @@ static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .rig
         case KSOProgressHUDViewStyleBlurRegular:
             return @"Blur Regular";
     }
+}
+- (void)_updateProgressHUDWithBlock:(dispatch_block_t)block; {
+    [KSOProgressHUDView dismiss];
+    
+    block();
+    
+    [KSOProgressHUDView present];
 }
 
 @end
