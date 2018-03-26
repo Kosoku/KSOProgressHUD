@@ -130,6 +130,15 @@
     
     [self _updateSubviewHierarchy];
 }
+- (void)setContentCornerRadius:(CGFloat)contentCornerRadius {
+    if (_contentCornerRadius == contentCornerRadius) {
+        return;
+    }
+    
+    _contentCornerRadius = contentCornerRadius;
+    
+    [self.blurEffectView ?: self.contentBackgroundView setKDI_cornerRadius:_contentCornerRadius];
+}
 #pragma mark -
 - (void)startAnimating; {
     [self.activityIndicatorView startAnimating];
@@ -239,8 +248,8 @@
     
     if (_blurEffectView != nil) {
         _blurEffectView.translatesAutoresizingMaskIntoConstraints = NO;
-        _blurEffectView.KDI_cornerRadius = self.contentCornerRadius;
         _blurEffectView.layer.masksToBounds = YES;
+        _blurEffectView.KDI_cornerRadius = self.contentCornerRadius;
         
         [self.backgroundView addSubview:_blurEffectView];
     }

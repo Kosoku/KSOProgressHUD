@@ -30,6 +30,7 @@ static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .rig
 @property (copy,nonatomic) NSArray<NSNumber *> *styles;
 
 - (UIView *)_createVibrancyViews;
+- (UIView *)_createCornerRadiusViews;
 - (NSString *)_stringForStyle:(KSOProgressHUDViewStyle)style;
 - (void)_updateProgressHUDWithBlock:(dispatch_block_t)block;
 @end
@@ -99,6 +100,13 @@ static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .rig
     [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[view]" options:0 metrics:nil views:@{@"view": vibrancyView}]];
     [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[top]-[view]" options:0 metrics:nil views:@{@"view": vibrancyView, @"top": self.stylePickerViewButton}]];
     
+    UIView *cornerRadiusView = [self _createCornerRadiusViews];
+    
+    [self.scrollView addSubview:cornerRadiusView];
+    
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[view]" options:0 metrics:nil views:@{@"view": cornerRadiusView}]];
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[top]-[view]" options:0 metrics:nil views:@{@"view": cornerRadiusView, @"top": vibrancyView}]];
+    
     self.navigationItem.rightBarButtonItems = @[[UIBarButtonItem KDI_barButtonItemWithImage:[UIImage KSO_fontAwesomeSolidImageWithString:@"\uf070" size:kBarButtonItemImageSize].KDI_templateImage style:UIBarButtonItemStylePlain block:^(__kindof UIBarButtonItem * _Nonnull barButtonItem) {
         [KSOProgressHUDView dismiss];
     }],[UIBarButtonItem KDI_barButtonItemWithImage:[UIImage KSO_fontAwesomeSolidImageWithString:@"\uf06e" size:kBarButtonItemImageSize].KDI_templateImage style:UIBarButtonItemStylePlain block:^(__kindof UIBarButtonItem * _Nonnull barButtonItem) {
@@ -113,6 +121,9 @@ static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .rig
     return [self _stringForStyle:self.styles[row].integerValue];
 }
 
+- (NSString *)pickerViewButton:(KDIPickerViewButton *)pickerViewButton titleForSelectedRows:(NSArray<NSNumber *> *)selectedRows {
+    return [NSString stringWithFormat:@"Style: %@",[self _stringForStyle:self.styles[selectedRows.firstObject.integerValue].integerValue]];
+}
 - (void)pickerViewButton:(KDIPickerViewButton *)pickerViewButton didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
     [self _updateProgressHUDWithBlock:^{
         KSOProgressHUDView.appearance.style = self.styles[row].integerValue;
@@ -172,6 +183,54 @@ static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .rig
     } forControlEvents:UIControlEventValueChanged];
     
     [stackView addArrangedSubview:switchControl];
+    
+    return backgroundView;
+}
+- (UIView *)_createCornerRadiusViews; {
+    kstWeakify(self);
+    
+    UIView *backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
+    
+    backgroundView.translatesAutoresizingMaskIntoConstraints = NO;
+    backgroundView.backgroundColor = [self.view.tintColor KDI_contrastingColor];
+    backgroundView.KDI_cornerRadius = kCornerRadius;
+    
+    UIStackView *stackView = [[UIStackView alloc] initWithFrame:CGRectZero];
+    
+    stackView.translatesAutoresizingMaskIntoConstraints = NO;
+    stackView.axis = UILayoutConstraintAxisHorizontal;
+    stackView.alignment = UIStackViewAlignmentCenter;
+    stackView.spacing = 8.0;
+    
+    [backgroundView addSubview:stackView];
+    
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[view]-|" options:0 metrics:nil views:@{@"view": stackView}]];
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[view]-|" options:0 metrics:nil views:@{@"view": stackView}]];
+    
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
+    
+    label.translatesAutoresizingMaskIntoConstraints = NO;
+    label.textColor = [backgroundView.backgroundColor KDI_contrastingColor];
+    label.KDI_dynamicTypeTextStyle = UIFontTextStyleBody;
+    label.text = @"Corner Radius";
+    
+    [stackView addArrangedSubview:label];
+    
+    UIStepper *stepper = [[UIStepper alloc] initWithFrame:CGRectZero];
+    
+    stepper.translatesAutoresizingMaskIntoConstraints = NO;
+    stepper.minimumValue = 0.0;
+    stepper.maximumValue = 25.0;
+    stepper.stepValue = 1.0;
+    stepper.value = 5.0;
+    [stepper KDI_addBlock:^(__kindof UIControl * _Nonnull control, UIControlEvents controlEvents) {
+        kstStrongify(self);
+        [self _updateProgressHUDWithBlock:^{
+            KSOProgressHUDView.appearance.contentCornerRadius = stepper.value;
+        }];
+    } forControlEvents:UIControlEventValueChanged];
+    
+    [stackView addArrangedSubview:stepper];
     
     return backgroundView;
 }
