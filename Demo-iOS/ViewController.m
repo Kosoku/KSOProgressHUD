@@ -21,9 +21,13 @@
 #import <Stanley/Stanley.h>
 
 static CGSize const kBarButtonItemImageSize = {.width=25, .height=25};
+static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .right=8};
 
-@interface ViewController ()
+@interface ViewController () <KDIPickerViewButtonDataSource,KDIPickerViewButtonDelegate>
+@property (strong,nonatomic) KDIPickerViewButton *stylePickerViewButton;
+@property (copy,nonatomic) NSArray<NSNumber *> *styles;
 
+- (NSString *)_stringForStyle:(KSOProgressHUDViewStyle)style;
 @end
 
 @implementation ViewController
@@ -34,6 +38,14 @@ static CGSize const kBarButtonItemImageSize = {.width=25, .height=25};
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.styles = @[@(KSOProgressHUDViewStyleLight),
+                    @(KSOProgressHUDViewStyleDark),
+                    @(KSOProgressHUDViewStyleBlurExtraLight),
+                    @(KSOProgressHUDViewStyleBlurLight),
+                    @(KSOProgressHUDViewStyleBlurDark),
+                    @(KSOProgressHUDViewStyleBlurRegular),
+                    @(KSOProgressHUDViewStyleBlurProminent)];
     
     self.view.backgroundColor = UIColor.whiteColor;
     
@@ -64,15 +76,58 @@ static CGSize const kBarButtonItemImageSize = {.width=25, .height=25};
     [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[view(==height)]|" options:0 metrics:@{@"height": @(ceil(CGRectGetHeight(UIScreen.mainScreen.bounds) * 3))} views:@{@"view": backgroundView}]];
     [NSLayoutConstraint activateConstraints:@[[backgroundView.widthAnchor constraintEqualToAnchor:scrollView.widthAnchor]]];
     
-    self.navigationItem.rightBarButtonItems = @[[UIBarButtonItem KDI_barButtonItemWithImage:[UIImage KSO_fontAwesomeSolidImageWithString:@"\uf067" size:kBarButtonItemImageSize].KDI_templateImage style:UIBarButtonItemStylePlain block:^(__kindof UIBarButtonItem * _Nonnull barButtonItem) {
-        float progress = KSOProgressHUDView.currentProgressHUDView.progress;
-        
-        [KSOProgressHUDView.currentProgressHUDView setProgress:progress + 0.1 animated:YES];
-    }],[UIBarButtonItem KDI_barButtonItemWithImage:[UIImage KSO_fontAwesomeSolidImageWithString:@"\uf070" size:kBarButtonItemImageSize].KDI_templateImage style:UIBarButtonItemStylePlain block:^(__kindof UIBarButtonItem * _Nonnull barButtonItem) {
+    self.stylePickerViewButton = [KDIPickerViewButton buttonWithType:UIButtonTypeSystem];
+    self.stylePickerViewButton.translatesAutoresizingMaskIntoConstraints = NO;
+    self.stylePickerViewButton.backgroundColor = [self.stylePickerViewButton.tintColor KDI_contrastingColor];
+    self.stylePickerViewButton.titleLabel.KDI_dynamicTypeTextStyle = UIFontTextStyleCallout;
+    self.stylePickerViewButton.contentEdgeInsets = kContentEdgeInsets;
+    self.stylePickerViewButton.rounded = YES;
+    self.stylePickerViewButton.dataSource = self;
+    self.stylePickerViewButton.delegate = self;
+    [scrollView addSubview:self.stylePickerViewButton];
+    
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[view]" options:0 metrics:nil views:@{@"view": self.stylePickerViewButton}]];
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[view]" options:0 metrics:nil views:@{@"view": self.stylePickerViewButton}]];
+    
+    self.navigationItem.rightBarButtonItems = @[[UIBarButtonItem KDI_barButtonItemWithImage:[UIImage KSO_fontAwesomeSolidImageWithString:@"\uf070" size:kBarButtonItemImageSize].KDI_templateImage style:UIBarButtonItemStylePlain block:^(__kindof UIBarButtonItem * _Nonnull barButtonItem) {
         [KSOProgressHUDView dismiss];
     }],[UIBarButtonItem KDI_barButtonItemWithImage:[UIImage KSO_fontAwesomeSolidImageWithString:@"\uf06e" size:kBarButtonItemImageSize].KDI_templateImage style:UIBarButtonItemStylePlain block:^(__kindof UIBarButtonItem * _Nonnull barButtonItem) {
-        [[KSOProgressHUDView present] startAnimating];
+        [KSOProgressHUDView present];
     }]];
+}
+
+- (NSInteger)pickerViewButton:(KDIPickerViewButton *)pickerViewButton numberOfRowsInComponent:(NSInteger)component {
+    return self.styles.count;
+}
+- (NSString *)pickerViewButton:(KDIPickerViewButton *)pickerViewButton titleForRow:(NSInteger)row forComponent:(NSInteger)component {
+    return [self _stringForStyle:self.styles[row].integerValue];
+}
+
+- (void)pickerViewButton:(KDIPickerViewButton *)pickerViewButton didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
+    [KSOProgressHUDView dismiss];
+    
+    KSOProgressHUDView.appearance.style = self.styles[row].integerValue;
+    
+    [KSOProgressHUDView present];
+}
+
+- (NSString *)_stringForStyle:(KSOProgressHUDViewStyle)style; {
+    switch (style) {
+        case KSOProgressHUDViewStyleBlurExtraLight:
+            return @"Blur Extra Light";
+        case KSOProgressHUDViewStyleLight:
+            return @"Light";
+        case KSOProgressHUDViewStyleDark:
+            return @"Dark";
+        case KSOProgressHUDViewStyleBlurDark:
+            return @"Blur Dark";
+        case KSOProgressHUDViewStyleBlurProminent:
+            return @"Blur Prominent";
+        case KSOProgressHUDViewStyleBlurLight:
+            return @"Blur Light";
+        case KSOProgressHUDViewStyleBlurRegular:
+            return @"Blur Regular";
+    }
 }
 
 @end

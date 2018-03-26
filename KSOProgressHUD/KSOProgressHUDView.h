@@ -17,32 +17,31 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSInteger, KSOProgressHUDViewBlurEffectStyle) {
-    KSOProgressHUDViewBlurEffectStyleNone = NSIntegerMin,
-    KSOProgressHUDViewBlurEffectStyleExtraLight = UIBlurEffectStyleExtraLight,
-    KSOProgressHUDViewBlurEffectStyleLight = UIBlurEffectStyleLight,
-    KSOProgressHUDViewBlurEffectStyleDark = UIBlurEffectStyleDark,
+typedef NS_ENUM(NSInteger, KSOProgressHUDViewStyle) {
+    KSOProgressHUDViewStyleLight = NSIntegerMin,
+    KSOProgressHUDViewStyleDark,
+    KSOProgressHUDViewStyleBlurExtraLight = UIBlurEffectStyleExtraLight,
+    KSOProgressHUDViewStyleBlurLight = UIBlurEffectStyleLight,
+    KSOProgressHUDViewStyleBlurDark = UIBlurEffectStyleDark,
 #if (TARGET_OS_TV)
-    KSOProgressHUDViewBlurEffectStyleExtraDark = UIBlurEffectStyleExtraDark,
+    KSOProgressHUDViewStyleBlurExtraDark = UIBlurEffectStyleExtraDark,
 #endif
-    KSOProgressHUDViewBlurEffectStyleRegular = UIBlurEffectStyleRegular,
-    KSOProgressHUDViewBlurEffectStyleProminent = UIBlurEffectStyleProminent
+    KSOProgressHUDViewStyleBlurRegular = UIBlurEffectStyleRegular,
+    KSOProgressHUDViewStyleBlurProminent = UIBlurEffectStyleProminent
 };
 
 @interface KSOProgressHUDView : UIView
 
-@property (class,readonly,nonatomic,nullable) __kindof KSOProgressHUDView *currentProgressHUDView;
-
-@property (assign,nonatomic) KSOProgressHUDViewBlurEffectStyle blurEffectStyle UI_APPEARANCE_SELECTOR;
+@property (assign,nonatomic) KSOProgressHUDViewStyle style UI_APPEARANCE_SELECTOR;
 @property (assign,nonatomic) BOOL wantsVibrancyEffect UI_APPEARANCE_SELECTOR;
+@property (assign,nonatomic) CGFloat contentCornerRadius UI_APPEARANCE_SELECTOR;
 
 @property (assign,nonatomic) float progress;
 - (void)setProgress:(float)progress animated:(BOOL)animated;
 
-+ (instancetype)progressHUDView;
-
-+ (__kindof KSOProgressHUDView *)present;
++ (void)present;
 + (void)dismiss;
++ (void)presentWithProgress:(float)progress animated:(BOOL)animated;
 
 - (void)startAnimating;
 - (void)stopAnimating;
