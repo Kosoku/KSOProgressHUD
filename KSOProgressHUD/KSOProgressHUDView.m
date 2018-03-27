@@ -101,34 +101,39 @@
 }
 #pragma mark *** Public Methods ***
 + (void)present; {
-    KSOProgressHUDView *view = KSOProgressHUDView.currentProgressHUDViewCreateIfNecessary;
-    
-    view.progressView.hidden = YES;
-    
-    [view setNeedsUpdateConstraints];
-    
-    [view startAnimating];
+    [self presentWithImage:nil progress:FLT_MAX observedProgress:nil text:nil];
 }
-+ (void)dismiss; {
-    [KSOProgressHUDView.currentProgressHUDView removeFromSuperview];
++ (void)presentWithImage:(UIImage *)image; {
+    [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:nil];
 }
 + (void)presentWithProgress:(float)progress animated:(BOOL)animated; {
-    KSOProgressHUDView *view = KSOProgressHUDView.currentProgressHUDViewCreateIfNecessary;
-    
-    view.progressView.hidden = NO;
-    
-    [view stopAnimating];
-    
-    [view setNeedsUpdateConstraints];
-    
-    [view setProgress:progress animated:animated];
+    [self presentWithImage:nil progress:progress observedProgress:nil text:nil];
 }
 + (void)presentWithText:(NSString *)text; {
+    [self presentWithImage:nil progress:FLT_MAX observedProgress:nil text:text];
+}
++ (void)presentWithImage:(nullable UIImage *)image progress:(float)progress observedProgress:(nullable NSProgress *)observedProgress text:(nullable NSString *)text; {
     KSOProgressHUDView *view = KSOProgressHUDView.currentProgressHUDViewCreateIfNecessary;
     
+    view.image = image;
     view.text = text;
     
-    [view startAnimating];
+    view.progressView.observedProgress = observedProgress;
+    
+    if (observedProgress == nil &&
+        image == nil) {
+        
+        if (progress == FLT_MAX) {
+            [view startAnimating];
+        }
+        else {
+            [view setProgress:progress animated:YES];
+        }
+    }
+}
+#pragma mark -
++ (void)dismiss; {
+    [KSOProgressHUDView.currentProgressHUDView removeFromSuperview];
 }
 #pragma mark -
 - (void)startAnimating; {
@@ -166,6 +171,7 @@
     [self.blurEffectView ?: self.contentBackgroundView setKDI_cornerRadius:_contentCornerRadius];
 }
 #pragma mark -
+@dynamic progress;
 - (float)progress {
     return self.progressView.progress;
 }
@@ -183,6 +189,15 @@
 - (void)setText:(NSString *)text {
     self.label.text = text;
     self.label.hidden = text.length == 0;
+}
+#pragma mark -
+@dynamic image;
+- (UIImage *)image {
+    return self.imageView.image;
+}
+- (void)setImage:(UIImage *)image {
+    self.imageView.image = image;
+    self.imageView.hidden = image == nil;
 }
 #pragma mark *** Private Methods ***
 - (void)_updateSubviewHierarchy; {

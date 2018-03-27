@@ -42,15 +42,20 @@ typedef NS_ENUM(NSInteger, KSOProgressHUDViewStyle) {
 @property (assign,nonatomic) KSOProgressHUDViewStyle style UI_APPEARANCE_SELECTOR;
 @property (assign,nonatomic) CGFloat contentCornerRadius UI_APPEARANCE_SELECTOR;
 
+@property (strong,nonatomic,nullable) UIImage *image;
+
 @property (assign,nonatomic) float progress;
 - (void)setProgress:(float)progress animated:(BOOL)animated;
 
 @property (copy,nonatomic,nullable) NSString *text;
 
 + (void)present;
-+ (void)dismiss;
++ (void)presentWithImage:(UIImage *)image;
 + (void)presentWithProgress:(float)progress animated:(BOOL)animated;
 + (void)presentWithText:(NSString *)text;
++ (void)presentWithImage:(nullable UIImage *)image progress:(float)progress observedProgress:(nullable NSProgress *)observedProgress text:(nullable NSString *)text;
+
++ (void)dismiss;
 
 - (void)startAnimating;
 - (void)stopAnimating;
