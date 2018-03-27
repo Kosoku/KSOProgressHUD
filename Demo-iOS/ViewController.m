@@ -24,7 +24,7 @@ static CGFloat const kCornerRadius = 5.0;
 static CGSize const kBarButtonItemImageSize = {.width=25, .height=25};
 static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .right=8};
 
-@interface ViewController () <KDIPickerViewButtonDataSource,KDIPickerViewButtonDelegate>
+@interface ViewController () <KDIPickerViewButtonDataSource,KDIPickerViewButtonDelegate,UIScrollViewDelegate>
 @property (strong,nonatomic) UIScrollView *scrollView;
 @property (strong,nonatomic) KDIPickerViewButton *stylePickerViewButton;
 @property (copy,nonatomic) NSArray<NSNumber *> *styles;
@@ -32,6 +32,7 @@ static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .rig
 - (UIView *)_createVibrancyViews;
 - (UIView *)_createCornerRadiusViews;
 - (UIView *)_createProgressViews;
+- (UIView *)_createTextViews;
 - (NSString *)_stringForStyle:(KSOProgressHUDViewStyle)style;
 - (void)_updateProgressHUDWithBlock:(dispatch_block_t)block;
 @end
@@ -57,6 +58,7 @@ static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .rig
     
     self.scrollView = [[UIScrollView alloc] initWithFrame:CGRectZero];
     self.scrollView.translatesAutoresizingMaskIntoConstraints = NO;
+    self.scrollView.delegate = self;
     
     [self.view addSubview:self.scrollView];
     
@@ -115,11 +117,22 @@ static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .rig
     [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[view]-|" options:0 metrics:nil views:@{@"view": progressView}]];
     [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[top]-[view]" options:0 metrics:nil views:@{@"view": progressView, @"top": cornerRadiusView}]];
     
+    UIView *textView = [self _createTextViews];
+    
+    [self.scrollView addSubview:textView];
+    
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[view]-|" options:0 metrics:nil views:@{@"view": textView}]];
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[top]-[view]" options:0 metrics:nil views:@{@"view": textView, @"top": progressView}]];
+    
     self.navigationItem.rightBarButtonItems = @[[UIBarButtonItem KDI_barButtonItemWithImage:[UIImage KSO_fontAwesomeSolidImageWithString:@"\uf070" size:kBarButtonItemImageSize].KDI_templateImage style:UIBarButtonItemStylePlain block:^(__kindof UIBarButtonItem * _Nonnull barButtonItem) {
         [KSOProgressHUDView dismiss];
     }],[UIBarButtonItem KDI_barButtonItemWithImage:[UIImage KSO_fontAwesomeSolidImageWithString:@"\uf06e" size:kBarButtonItemImageSize].KDI_templateImage style:UIBarButtonItemStylePlain block:^(__kindof UIBarButtonItem * _Nonnull barButtonItem) {
         [KSOProgressHUDView present];
     }]];
+}
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    [self.view endEditing:NO];
 }
 
 - (NSInteger)pickerViewButton:(KDIPickerViewButton *)pickerViewButton numberOfRowsInComponent:(NSInteger)component {
@@ -243,8 +256,6 @@ static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .rig
     return backgroundView;
 }
 - (UIView *)_createProgressViews; {
-    kstWeakify(self);
-    
     UIView *backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
     
     backgroundView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -285,6 +296,29 @@ static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .rig
     } forControlEvents:UIControlEventValueChanged];
     
     [stackView addArrangedSubview:slider];
+    
+    return backgroundView;
+}
+- (UIView *)_createTextViews; {
+    UIView *backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
+    
+    backgroundView.translatesAutoresizingMaskIntoConstraints = NO;
+    backgroundView.backgroundColor = [self.view.tintColor KDI_contrastingColor];
+    backgroundView.KDI_cornerRadius = kCornerRadius;
+    
+    UITextField *textField = [[UITextField alloc] initWithFrame:CGRectZero];
+    
+    textField.translatesAutoresizingMaskIntoConstraints = NO;
+    textField.placeholder = @"Enter text…";
+    textField.KDI_dynamicTypeTextStyle = UIFontTextStyleBody;
+    [textField KDI_addBlock:^(__kindof UIControl * _Nonnull control, UIControlEvents controlEvents) {
+        [KSOProgressHUDView presentWithText:textField.text];
+    } forControlEvents:UIControlEventAllEditingEvents];
+    
+    [backgroundView addSubview:textField];
+    
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[view]-|" options:0 metrics:nil views:@{@"view": textField}]];
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[view]-|" options:0 metrics:nil views:@{@"view": textField}]];
     
     return backgroundView;
 }

@@ -45,9 +45,12 @@ typedef NS_ENUM(NSInteger, KSOProgressHUDViewStyle) {
 @property (assign,nonatomic) float progress;
 - (void)setProgress:(float)progress animated:(BOOL)animated;
 
+@property (copy,nonatomic,nullable) NSString *text;
+
 + (void)present;
 + (void)dismiss;
 + (void)presentWithProgress:(float)progress animated:(BOOL)animated;
++ (void)presentWithText:(NSString *)text;
 
 - (void)startAnimating;
 - (void)stopAnimating;

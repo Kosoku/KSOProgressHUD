@@ -123,6 +123,20 @@
     
     [view setProgress:progress animated:animated];
 }
++ (void)presentWithText:(NSString *)text; {
+    KSOProgressHUDView *view = KSOProgressHUDView.currentProgressHUDViewCreateIfNecessary;
+    
+    view.text = text;
+    
+    [view startAnimating];
+}
+#pragma mark -
+- (void)startAnimating; {
+    [self.activityIndicatorView startAnimating];
+}
+- (void)stopAnimating; {
+    [self.activityIndicatorView stopAnimating];
+}
 #pragma mark -
 - (void)setOptions:(KSOProgressHUDViewOptions)options {
     if (_options == options) {
@@ -152,13 +166,6 @@
     [self.blurEffectView ?: self.contentBackgroundView setKDI_cornerRadius:_contentCornerRadius];
 }
 #pragma mark -
-- (void)startAnimating; {
-    [self.activityIndicatorView startAnimating];
-}
-- (void)stopAnimating; {
-    [self.activityIndicatorView stopAnimating];
-}
-#pragma mark -
 - (float)progress {
     return self.progressView.progress;
 }
@@ -167,6 +174,15 @@
 }
 - (void)setProgress:(float)progress animated:(BOOL)animated; {
     [self.progressView setProgress:progress animated:animated];
+}
+#pragma mark -
+@dynamic text;
+- (NSString *)text {
+    return self.label.text;
+}
+- (void)setText:(NSString *)text {
+    self.label.text = text;
+    self.label.hidden = text.length == 0;
 }
 #pragma mark *** Private Methods ***
 - (void)_updateSubviewHierarchy; {
