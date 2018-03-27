@@ -105,6 +105,13 @@ static NSTimeInterval const kDefaultDismissDelay = 1.5;
     [super updateConstraints];
 }
 #pragma mark *** Public Methods ***
+- (void)startAnimating; {
+    [self.activityIndicatorView startAnimating];
+}
+- (void)stopAnimating; {
+    [self.activityIndicatorView stopAnimating];
+}
+#pragma mark -
 + (void)present; {
     [self presentWithImage:nil progress:FLT_MAX observedProgress:nil text:nil];
 }
@@ -177,13 +184,6 @@ static NSTimeInterval const kDefaultDismissDelay = 1.5;
     else {
         block(nil);
     }
-}
-#pragma mark -
-- (void)startAnimating; {
-    [self.activityIndicatorView startAnimating];
-}
-- (void)stopAnimating; {
-    [self.activityIndicatorView stopAnimating];
 }
 #pragma mark -
 - (void)setOptions:(KSOProgressHUDViewOptions)options {
