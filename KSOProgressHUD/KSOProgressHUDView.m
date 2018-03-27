@@ -21,6 +21,7 @@
 #import <Stanley/Stanley.h>
 
 static CGSize const kDefaultImageSize = {.width=25, .height=25};
+static NSTimeInterval const kDefaultDismissDelay = 1.5;
 
 @interface KSOProgressHUDView ()
 
@@ -39,6 +40,8 @@ static CGSize const kDefaultImageSize = {.width=25, .height=25};
 @property (readonly,nonatomic) BOOL wantsVibrancyEffect;
 @property (readonly,nonatomic) UIColor *contentBackgroundColor;
 @property (readonly,nonatomic) UIColor *contentForegroundColor;
+
+@property (strong,nonatomic) KSTTimer *dismissTimer;
 
 @property (class,readonly,nonatomic) KSOProgressHUDView *currentProgressHUDView;
 @property (class,readonly,nonatomic) KSOProgressHUDView *currentProgressHUDViewCreateIfNecessary;
@@ -115,16 +118,19 @@ static CGSize const kDefaultImageSize = {.width=25, .height=25};
     UIImage *image = [UIImage KSO_fontAwesomeSolidImageWithString:@"\uf00c" size:kDefaultImageSize].KDI_templateImage;
     
     [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:text];
+    [self dismissWithDelay:kDefaultDismissDelay];
 }
 + (void)presentFailureImageWithText:(NSString *)text; {
     UIImage *image = [UIImage KSO_fontAwesomeSolidImageWithString:@"\uf12a" size:kDefaultImageSize].KDI_templateImage;
     
     [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:text];
+    [self dismissWithDelay:kDefaultDismissDelay];
 }
 + (void)presentInfoImageWithText:(NSString *)text; {
     UIImage *image = [UIImage KSO_fontAwesomeSolidImageWithString:@"\uf129" size:kDefaultImageSize].KDI_templateImage;
     
     [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:text];
+    [self dismissWithDelay:kDefaultDismissDelay];
 }
 + (void)presentWithProgress:(float)progress animated:(BOOL)animated; {
     [self presentWithImage:nil progress:progress observedProgress:nil text:nil];
@@ -134,6 +140,9 @@ static CGSize const kDefaultImageSize = {.width=25, .height=25};
 }
 + (void)presentWithImage:(nullable UIImage *)image progress:(float)progress observedProgress:(nullable NSProgress *)observedProgress text:(nullable NSString *)text; {
     KSOProgressHUDView *view = KSOProgressHUDView.currentProgressHUDViewCreateIfNecessary;
+    
+    [view.dismissTimer invalidate];
+    view.dismissTimer = nil;
     
     view.image = image;
     view.text = text;
@@ -153,7 +162,21 @@ static CGSize const kDefaultImageSize = {.width=25, .height=25};
 }
 #pragma mark -
 + (void)dismiss; {
-    [KSOProgressHUDView.currentProgressHUDView removeFromSuperview];
+    [self dismissWithDelay:0.0];
+}
++ (void)dismissWithDelay:(NSTimeInterval)delay; {
+    KSOProgressHUDView *view = KSOProgressHUDView.currentProgressHUDView;
+    
+    void(^block)(KSTTimer *) = ^(KSTTimer *timer){
+        [view removeFromSuperview];
+    };
+    
+    if (delay > 0.0) {
+        view.dismissTimer = [KSTTimer scheduledTimerWithTimeInterval:delay block:block userInfo:nil repeats:NO queue:nil];
+    }
+    else {
+        block(nil);
+    }
 }
 #pragma mark -
 - (void)startAnimating; {
