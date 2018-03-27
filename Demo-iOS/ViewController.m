@@ -19,6 +19,7 @@
 #import <Ditko/Ditko.h>
 #import <KSOFontAwesomeExtensions/KSOFontAwesomeExtensions.h>
 #import <Stanley/Stanley.h>
+#import <Quicksilver/Quicksilver.h>
 
 static CGFloat const kCornerRadius = 5.0;
 static CGSize const kBarButtonItemImageSize = {.width=25, .height=25};
@@ -33,6 +34,8 @@ static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .rig
 - (UIView *)_createCornerRadiusViews;
 - (UIView *)_createProgressViews;
 - (UIView *)_createTextViews;
+- (UIView *)_createDefaultImageViews;
+- (UIView *)_createImageViews;
 - (NSString *)_stringForStyle:(KSOProgressHUDViewStyle)style;
 - (void)_updateProgressHUDWithBlock:(dispatch_block_t)block;
 @end
@@ -123,6 +126,20 @@ static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .rig
     
     [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[view]-|" options:0 metrics:nil views:@{@"view": textView}]];
     [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[top]-[view]" options:0 metrics:nil views:@{@"view": textView, @"top": progressView}]];
+    
+    UIView *defaultImageView = [self _createDefaultImageViews];
+    
+    [self.scrollView addSubview:defaultImageView];
+    
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[view]-|" options:0 metrics:nil views:@{@"view": defaultImageView}]];
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[top]-[view]" options:0 metrics:nil views:@{@"view": defaultImageView, @"top": textView}]];
+    
+    UIView *customImageView = [self _createImageViews];
+    
+    [self.scrollView addSubview:customImageView];
+    
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[view]-|" options:0 metrics:nil views:@{@"view": customImageView}]];
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[top]-[view]" options:0 metrics:nil views:@{@"view": customImageView, @"top": defaultImageView}]];
     
     self.navigationItem.rightBarButtonItems = @[[UIBarButtonItem KDI_barButtonItemWithImage:[UIImage KSO_fontAwesomeSolidImageWithString:@"\uf070" size:kBarButtonItemImageSize].KDI_templateImage style:UIBarButtonItemStylePlain block:^(__kindof UIBarButtonItem * _Nonnull barButtonItem) {
         [KSOProgressHUDView dismiss];
@@ -319,6 +336,76 @@ static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .rig
     
     [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[view]-|" options:0 metrics:nil views:@{@"view": textField}]];
     [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[view]-|" options:0 metrics:nil views:@{@"view": textField}]];
+    
+    return backgroundView;
+}
+- (UIView *)_createDefaultImageViews; {
+    UIView *backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
+    
+    backgroundView.translatesAutoresizingMaskIntoConstraints = NO;
+    backgroundView.backgroundColor = [self.view.tintColor KDI_contrastingColor];
+    backgroundView.KDI_cornerRadius = kCornerRadius;
+    
+    NSArray *strings = @[@"Success",
+                         @"Failure",
+                         @"Info"];
+    UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:strings];
+    
+    segmentedControl.translatesAutoresizingMaskIntoConstraints = NO;
+    segmentedControl.apportionsSegmentWidthsByContent = YES;
+    segmentedControl.momentary = YES;
+    [segmentedControl KDI_addBlock:^(__kindof UIControl * _Nonnull control, UIControlEvents controlEvents) {
+        switch (segmentedControl.selectedSegmentIndex) {
+            case 0:
+                [KSOProgressHUDView presentSuccessImageWithText:@"Success!"];
+                break;
+            case 1:
+                [KSOProgressHUDView presentFailureImageWithText:@"Failure!"];
+                break;
+            case 2:
+                [KSOProgressHUDView presentInfoImageWithText:@"Info!"];
+                break;
+            default:
+                break;
+        }
+    } forControlEvents:UIControlEventValueChanged];
+    
+    [backgroundView addSubview:segmentedControl];
+    
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[view]-|" options:0 metrics:nil views:@{@"view": segmentedControl}]];
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[view]-|" options:0 metrics:nil views:@{@"view": segmentedControl}]];
+    
+    return backgroundView;
+}
+- (UIView *)_createImageViews; {
+    UIView *backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
+    
+    backgroundView.translatesAutoresizingMaskIntoConstraints = NO;
+    backgroundView.backgroundColor = [self.view.tintColor KDI_contrastingColor];
+    backgroundView.KDI_cornerRadius = kCornerRadius;
+    
+    NSArray *strings = @[@"\uf2b9",
+                         @"\uf042",
+                         @"\uf0f9",
+                         @"\uf13d",
+                         @"\uf187"];
+    NSArray *images = [strings KQS_map:^id _Nullable(id  _Nonnull object, NSInteger index) {
+        return [UIImage KSO_fontAwesomeSolidImageWithString:object size:kBarButtonItemImageSize].KDI_templateImage;
+    }];
+    
+    UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:images];
+    
+    segmentedControl.translatesAutoresizingMaskIntoConstraints = NO;
+    segmentedControl.apportionsSegmentWidthsByContent = YES;
+    segmentedControl.momentary = YES;
+    [segmentedControl KDI_addBlock:^(__kindof UIControl * _Nonnull control, UIControlEvents controlEvents) {
+        [KSOProgressHUDView presentWithImage:images[segmentedControl.selectedSegmentIndex] text:@"Image!"];
+    } forControlEvents:UIControlEventValueChanged];
+    
+    [backgroundView addSubview:segmentedControl];
+    
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[view]-|" options:0 metrics:nil views:@{@"view": segmentedControl}]];
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[view]-|" options:0 metrics:nil views:@{@"view": segmentedControl}]];
     
     return backgroundView;
 }

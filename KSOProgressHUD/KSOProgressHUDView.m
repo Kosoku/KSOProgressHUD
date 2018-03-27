@@ -20,6 +20,8 @@
 #import <Quicksilver/Quicksilver.h>
 #import <Stanley/Stanley.h>
 
+static CGSize const kDefaultImageSize = {.width=25, .height=25};
+
 @interface KSOProgressHUDView ()
 
 @property (strong,nonatomic) UIView *backgroundView;
@@ -105,6 +107,24 @@
 }
 + (void)presentWithImage:(UIImage *)image; {
     [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:nil];
+}
++ (void)presentWithImage:(UIImage *)image text:(NSString *)text; {
+    [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:text];
+}
++ (void)presentSuccessImageWithText:(NSString *)text; {
+    UIImage *image = [UIImage KSO_fontAwesomeSolidImageWithString:@"\uf00c" size:kDefaultImageSize].KDI_templateImage;
+    
+    [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:text];
+}
++ (void)presentFailureImageWithText:(NSString *)text; {
+    UIImage *image = [UIImage KSO_fontAwesomeSolidImageWithString:@"\uf12a" size:kDefaultImageSize].KDI_templateImage;
+    
+    [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:text];
+}
++ (void)presentInfoImageWithText:(NSString *)text; {
+    UIImage *image = [UIImage KSO_fontAwesomeSolidImageWithString:@"\uf129" size:kDefaultImageSize].KDI_templateImage;
+    
+    [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:text];
 }
 + (void)presentWithProgress:(float)progress animated:(BOOL)animated; {
     [self presentWithImage:nil progress:progress observedProgress:nil text:nil];
