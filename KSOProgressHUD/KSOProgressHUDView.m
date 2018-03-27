@@ -70,7 +70,9 @@
 - (void)updateConstraints {
     NSMutableArray *temp = [[NSMutableArray alloc] init];
     
-    [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view]|" options:0 metrics:nil views:@{@"view": self.progressView}]];
+    if (!self.progressView.isHidden) {
+        [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view(>=width)]|" options:0 metrics:@{@"width": @75.0} views:@{@"view": self.progressView}]];
+    }
     
     [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[view]-|" options:0 metrics:nil views:@{@"view": self.stackView}]];
     [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[view]-|" options:0 metrics:nil views:@{@"view": self.stackView}]];
@@ -99,7 +101,13 @@
 }
 #pragma mark *** Public Methods ***
 + (void)present; {
-    [KSOProgressHUDView.currentProgressHUDViewCreateIfNecessary startAnimating];
+    KSOProgressHUDView *view = KSOProgressHUDView.currentProgressHUDViewCreateIfNecessary;
+    
+    view.progressView.hidden = YES;
+    
+    [view setNeedsUpdateConstraints];
+    
+    [view startAnimating];
 }
 + (void)dismiss; {
     [KSOProgressHUDView.currentProgressHUDView removeFromSuperview];
@@ -108,6 +116,10 @@
     KSOProgressHUDView *view = KSOProgressHUDView.currentProgressHUDViewCreateIfNecessary;
     
     view.progressView.hidden = NO;
+    
+    [view stopAnimating];
+    
+    [view setNeedsUpdateConstraints];
     
     [view setProgress:progress animated:animated];
 }
