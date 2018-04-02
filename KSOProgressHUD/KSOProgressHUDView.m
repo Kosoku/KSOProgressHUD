@@ -41,6 +41,8 @@ static NSTimeInterval const kDefaultDismissDelay = 1.5;
 @property (readonly,nonatomic) UIColor *contentBackgroundColor;
 @property (readonly,nonatomic) UIColor *contentForegroundColor;
 
+@property (assign,nonatomic) BOOL hasPerformedPresentAnimation;
+
 @property (strong,nonatomic) KSTTimer *dismissTimer;
 
 @property (class,readonly,nonatomic) KSOProgressHUDView *currentProgressHUDView;
@@ -125,19 +127,19 @@ static NSTimeInterval const kDefaultDismissDelay = 1.5;
     UIImage *image = [UIImage KSO_fontAwesomeSolidImageWithString:@"\uf00c" size:kDefaultImageSize].KDI_templateImage;
     
     [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:text];
-    [self dismissWithDelay:kDefaultDismissDelay];
+    [self dismissAnimated:YES delay:kDefaultDismissDelay];
 }
 + (void)presentFailureImageWithText:(NSString *)text; {
     UIImage *image = [UIImage KSO_fontAwesomeSolidImageWithString:@"\uf12a" size:kDefaultImageSize].KDI_templateImage;
     
     [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:text];
-    [self dismissWithDelay:kDefaultDismissDelay];
+    [self dismissAnimated:YES delay:kDefaultDismissDelay];
 }
 + (void)presentInfoImageWithText:(NSString *)text; {
     UIImage *image = [UIImage KSO_fontAwesomeSolidImageWithString:@"\uf129" size:kDefaultImageSize].KDI_templateImage;
     
     [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:text];
-    [self dismissWithDelay:kDefaultDismissDelay];
+    [self dismissAnimated:YES delay:kDefaultDismissDelay];
 }
 + (void)presentWithProgress:(float)progress animated:(BOOL)animated; {
     [self presentWithImage:nil progress:progress observedProgress:nil text:nil];
@@ -154,7 +156,7 @@ static NSTimeInterval const kDefaultDismissDelay = 1.5;
     view.image = image;
     view.text = text;
     
-    view.progressView.observedProgress = observedProgress;
+    view.observedProgress = observedProgress;
     
     if (observedProgress == nil &&
         image == nil) {
@@ -178,7 +180,10 @@ static NSTimeInterval const kDefaultDismissDelay = 1.5;
         [view stopAnimating];
     }
     
-    if (view.alpha != 1.0) {
+    if (!view.hasPerformedPresentAnimation) {
+        view.hasPerformedPresentAnimation = YES;
+        
+        view.alpha = 0.0;
         view.transform = CGAffineTransformMakeScale(2.0, 2.0);
         
         [UIView animateWithDuration:0.33 delay:0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
@@ -189,20 +194,31 @@ static NSTimeInterval const kDefaultDismissDelay = 1.5;
 }
 #pragma mark -
 + (void)dismiss; {
-    [self dismissWithDelay:0.0];
+    [self dismissAnimated:YES delay:0.0];
 }
-+ (void)dismissWithDelay:(NSTimeInterval)delay; {
++ (void)dismissAnimated:(BOOL)animated; {
+    [self dismissAnimated:animated delay:0.0];
+}
++ (void)dismissAnimated:(BOOL)animated delay:(NSTimeInterval)delay; {
     KSOProgressHUDView *view = KSOProgressHUDView.currentProgressHUDView;
     
+    void(^completion)(void) = ^{
+        [view removeFromSuperview];
+    };
     void(^block)(KSTTimer *) = ^(KSTTimer *timer){
-        [UIView animateWithDuration:0.33 delay:0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
-            view.alpha = 0.0;
-            view.transform = CGAffineTransformMakeScale(2.0, 2.0);
-        } completion:^(BOOL finished) {
-            if (finished) {
-                [view removeFromSuperview];
-            }
-        }];
+        if (animated) {
+            [UIView animateWithDuration:0.33 delay:0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
+                view.alpha = 0.0;
+                view.transform = CGAffineTransformMakeScale(2.0, 2.0);
+            } completion:^(BOOL finished) {
+                if (finished) {
+                    completion();
+                }
+            }];
+        }
+        else {
+            completion();
+        }
     };
     
     if (delay > 0.0) {
@@ -250,6 +266,14 @@ static NSTimeInterval const kDefaultDismissDelay = 1.5;
 }
 - (void)setProgress:(float)progress animated:(BOOL)animated; {
     [self.progressView setProgress:progress animated:animated];
+}
+#pragma mark -
+@dynamic observedProgress;
+- (NSProgress *)observedProgress {
+    return self.progressView.observedProgress;
+}
+- (void)setObservedProgress:(NSProgress *)observedProgress {
+    self.progressView.observedProgress = observedProgress;
 }
 #pragma mark -
 @dynamic text;
@@ -306,7 +330,6 @@ static NSTimeInterval const kDefaultDismissDelay = 1.5;
     
     if (retval == nil) {
         retval = [[KSOProgressHUDView alloc] initWithFrame:CGRectZero];
-        retval.alpha = 0.0;
         
         [KSOProgressHUDView.currentWindow addSubview:retval];
         

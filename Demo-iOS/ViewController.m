@@ -428,7 +428,7 @@ static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .rig
     }
 }
 - (void)_updateProgressHUDWithBlock:(dispatch_block_t)block; {
-    [KSOProgressHUDView dismiss];
+    [KSOProgressHUDView dismissAnimated:NO];
     
     block();
     

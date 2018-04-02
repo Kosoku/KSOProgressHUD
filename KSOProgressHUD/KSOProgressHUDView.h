@@ -65,7 +65,8 @@ typedef NS_ENUM(NSInteger, KSOProgressHUDViewStyle) {
 + (void)presentWithImage:(nullable UIImage *)image progress:(float)progress observedProgress:(nullable NSProgress *)observedProgress text:(nullable NSString *)text;
 
 + (void)dismiss;
-+ (void)dismissWithDelay:(NSTimeInterval)delay;
++ (void)dismissAnimated:(BOOL)animated;
++ (void)dismissAnimated:(BOOL)animated delay:(NSTimeInterval)delay;
 
 @end
 
