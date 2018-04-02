@@ -16,6 +16,8 @@
 #import "AppDelegate.h"
 #import "ViewController.h"
 
+#import <KSOProgressHUD/KSOProgressHUD.h>
+
 @interface AppDelegate ()
 
 @end
@@ -24,6 +26,9 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    KSOProgressHUDView.appearance.backgroundStyle = KSOProgressHUDViewBackgroundStyleColor;
+    KSOProgressHUDView.appearance.backgroundViewColor = [UIColor colorWithWhite:0.0 alpha:0.5];
+    
     self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
     self.window.rootViewController = [[UINavigationController alloc] initWithRootViewController:[[ViewController alloc] initWithNibName:nil bundle:nil]];
     [self.window makeKeyAndVisible];

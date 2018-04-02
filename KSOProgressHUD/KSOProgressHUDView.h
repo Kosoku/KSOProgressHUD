@@ -36,10 +36,19 @@ typedef NS_ENUM(NSInteger, KSOProgressHUDViewStyle) {
     KSOProgressHUDViewStyleBlurProminent = UIBlurEffectStyleProminent
 };
 
+typedef NS_ENUM(NSInteger, KSOProgressHUDViewBackgroundStyle) {
+    KSOProgressHUDViewBackgroundStyleNone = 0,
+    KSOProgressHUDViewBackgroundStyleColor,
+    KSOProgressHUDViewBackgroundStyleCustom
+};
+
 @interface KSOProgressHUDView : UIView
 
 @property (assign,nonatomic) KSOProgressHUDViewOptions options UI_APPEARANCE_SELECTOR;
 @property (assign,nonatomic) KSOProgressHUDViewStyle style UI_APPEARANCE_SELECTOR;
+@property (assign,nonatomic) KSOProgressHUDViewBackgroundStyle backgroundStyle UI_APPEARANCE_SELECTOR;
+@property (strong,nonatomic,nullable) UIColor *backgroundViewColor UI_APPEARANCE_SELECTOR;
+@property (copy,nonatomic,nullable) NSString *backgroundViewClassName UI_APPEARANCE_SELECTOR;
 @property (assign,nonatomic) CGFloat contentCornerRadius UI_APPEARANCE_SELECTOR;
 
 @property (strong,nonatomic,nullable) UIImage *image;

@@ -83,9 +83,10 @@ static NSTimeInterval const kDefaultDismissDelay = 1.5;
     [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[view]-|" options:0 metrics:nil views:@{@"view": self.stackView}]];
     [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[view]-|" options:0 metrics:nil views:@{@"view": self.stackView}]];
     
+    UIView *contentBackgroundView = nil;
+    
     if (self.blurEffectView != nil) {
-        [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view]|" options:0 metrics:nil views:@{@"view": self.blurEffectView}]];
-        [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[view]|" options:0 metrics:nil views:@{@"view": self.blurEffectView}]];
+        contentBackgroundView = self.blurEffectView;
         
         if (self.vibrancyEffectView != nil) {
             [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view]|" options:0 metrics:nil views:@{@"view": self.vibrancyEffectView}]];
@@ -93,13 +94,13 @@ static NSTimeInterval const kDefaultDismissDelay = 1.5;
         }
     }
     else if (self.contentBackgroundView != nil) {
-        [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view]|" options:0 metrics:nil views:@{@"view": self.contentBackgroundView}]];
-        [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[view]|" options:0 metrics:nil views:@{@"view": self.contentBackgroundView}]];
+        contentBackgroundView = self.contentBackgroundView;
     }
     
-    [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|->=margin-[view]->=margin-|" options:0 metrics:@{@"margin": @0.0} views:@{@"view": self.backgroundView}]];
-    [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|->=margin-[view]->=margin-|" options:0 metrics:@{@"margin": @0.0} views:@{@"view": self.backgroundView}]];
-    [temp addObjectsFromArray:@[[self.backgroundView.centerXAnchor constraintEqualToAnchor:self.centerXAnchor],[self.backgroundView.centerYAnchor constraintEqualToAnchor:self.centerYAnchor]]];
+    [temp addObjectsFromArray:@[[contentBackgroundView.centerXAnchor constraintEqualToAnchor:self.backgroundView.centerXAnchor],[contentBackgroundView.centerYAnchor constraintEqualToAnchor:self.backgroundView.centerYAnchor]]];
+    
+    [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view]|" options:0 metrics:nil views:@{@"view": self.backgroundView}]];
+    [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[view]|" options:0 metrics:nil views:@{@"view": self.backgroundView}]];
     
     self.KDI_customConstraints = temp;
     
@@ -249,6 +250,39 @@ static NSTimeInterval const kDefaultDismissDelay = 1.5;
     
     [self _updateSubviewHierarchy];
 }
+- (void)setBackgroundStyle:(KSOProgressHUDViewBackgroundStyle)backgroundStyle {
+    if (_backgroundStyle == backgroundStyle) {
+        return;
+    }
+    
+    _backgroundStyle = backgroundStyle;
+    
+    switch (_backgroundStyle) {
+        case KSOProgressHUDViewBackgroundStyleNone:
+            self.userInteractionEnabled = NO;
+            break;
+        case KSOProgressHUDViewBackgroundStyleColor:
+        case KSOProgressHUDViewBackgroundStyleCustom:
+            self.userInteractionEnabled = YES;
+            break;
+        default:
+            break;
+    }
+    
+    [self _updateSubviewHierarchy];
+}
+- (void)setBackgroundViewColor:(UIColor *)backgroundViewColor {
+    _backgroundViewColor = backgroundViewColor;
+    
+    if (self.backgroundStyle == KSOProgressHUDViewBackgroundStyleColor) {
+        self.backgroundView.backgroundColor = _backgroundViewColor;
+    }
+}
+- (void)setBackgroundViewClassName:(NSString *)backgroundViewClassName {
+    _backgroundViewClassName = [backgroundViewClassName copy];
+    
+    [self _updateSubviewHierarchy];
+}
 - (void)setContentCornerRadius:(CGFloat)contentCornerRadius {
     if (_contentCornerRadius == contentCornerRadius) {
         return;
@@ -297,7 +331,25 @@ static NSTimeInterval const kDefaultDismissDelay = 1.5;
 }
 #pragma mark *** Private Methods ***
 - (void)_updateSubviewHierarchy; {
-    self.backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
+    switch (self.backgroundStyle) {
+        case KSOProgressHUDViewBackgroundStyleCustom:
+            if (self.backgroundViewClassName.length > 0) {
+                self.backgroundView = [[NSClassFromString(self.backgroundViewClassName) alloc] initWithFrame:CGRectZero];
+            }
+            break;
+        case KSOProgressHUDViewBackgroundStyleColor:
+            self.backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
+            self.backgroundView.backgroundColor = self.backgroundViewColor;
+            break;
+        case KSOProgressHUDViewBackgroundStyleNone:
+            self.backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
+            self.backgroundView.backgroundColor = UIColor.clearColor;
+            break;
+    }
+
+    if (self.backgroundView == nil) {
+        return;
+    }
     
     switch (self.style) {
         case KSOProgressHUDViewStyleDark:
@@ -363,7 +415,6 @@ static NSTimeInterval const kDefaultDismissDelay = 1.5;
     
     if (_backgroundView != nil) {
         _backgroundView.translatesAutoresizingMaskIntoConstraints = NO;
-        _backgroundView.backgroundColor = UIColor.clearColor;
         
         [self addSubview:_backgroundView];
     }
