@@ -17,6 +17,40 @@
 #import "ViewController.h"
 
 #import <KSOProgressHUD/KSOProgressHUD.h>
+#import <Ditko/Ditko.h>
+
+@interface GradientBackgroundView : KDIGradientView
+@property (strong,nonatomic) KDIButton *dismissButton;
+@end
+
+@implementation GradientBackgroundView
+- (instancetype)initWithFrame:(CGRect)frame {
+    if (!(self = [super initWithFrame:frame]))
+        return nil;
+    
+    CGFloat alpha = 0.7;
+    
+    self.colors = @[[KDIColorRandomRGB() colorWithAlphaComponent:alpha],
+                    [KDIColorRandomRGB() colorWithAlphaComponent:alpha],
+                    [KDIColorRandomRGB() colorWithAlphaComponent:alpha]];
+    
+    self.dismissButton = [KDIButton buttonWithType:UIButtonTypeSystem];
+    self.dismissButton.translatesAutoresizingMaskIntoConstraints = NO;
+    self.dismissButton.backgroundColor = [self.tintColor KDI_contrastingColor];
+    self.dismissButton.contentEdgeInsets = UIEdgeInsetsMake(8, 8, 8, 8);
+    self.dismissButton.rounded = YES;
+    [self.dismissButton setTitle:@"Dismiss" forState:UIControlStateNormal];
+    [self.dismissButton KDI_addBlock:^(__kindof UIControl * _Nonnull control, UIControlEvents controlEvents) {
+        [KSOProgressHUDView dismiss];
+    } forControlEvents:UIControlEventTouchUpInside];
+    [self addSubview:self.dismissButton];
+    
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[view]" options:0 metrics:nil views:@{@"view": self.dismissButton}]];
+    [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-margin-[view]" options:0 metrics:@{@"margin": @30.0} views:@{@"view": self.dismissButton}]];
+    
+    return self;
+}
+@end
 
 @interface AppDelegate ()
 
@@ -26,8 +60,8 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    KSOProgressHUDView.appearance.backgroundStyle = KSOProgressHUDViewBackgroundStyleColor;
-    KSOProgressHUDView.appearance.backgroundViewColor = [UIColor colorWithWhite:0.0 alpha:0.5];
+    KSOProgressHUDView.appearance.backgroundStyle = KSOProgressHUDViewBackgroundStyleCustom;
+    KSOProgressHUDView.appearance.backgroundViewClassName = NSStringFromClass(GradientBackgroundView.class);
     
     self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
     self.window.rootViewController = [[UINavigationController alloc] initWithRootViewController:[[ViewController alloc] initWithNibName:nil bundle:nil]];
