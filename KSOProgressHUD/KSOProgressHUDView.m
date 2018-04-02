@@ -16,6 +16,12 @@
 #import "KSOProgressHUDView.h"
 
 #import <Ditko/Ditko.h>
+#import <KSOFontAwesomeExtensions/KSOFontAwesomeExtensions.h>
+#import <Quicksilver/Quicksilver.h>
+#import <Stanley/Stanley.h>
+
+static CGSize const kDefaultImageSize = {.width=25, .height=25};
+static NSTimeInterval const kDefaultDismissDelay = 1.5;
 
 @interface KSOProgressHUDView ()
 
@@ -35,6 +41,12 @@
 @property (readonly,nonatomic) UIColor *contentBackgroundColor;
 @property (readonly,nonatomic) UIColor *contentForegroundColor;
 
+@property (strong,nonatomic) KSTTimer *dismissTimer;
+
+@property (class,readonly,nonatomic) KSOProgressHUDView *currentProgressHUDView;
+@property (class,readonly,nonatomic) KSOProgressHUDView *currentProgressHUDViewCreateIfNecessary;
+@property (class,readonly,nonatomic) UIWindow *currentWindow;
+
 - (void)_updateSubviewHierarchy;
 @end
 
@@ -49,6 +61,7 @@
     _contentCornerRadius = 5.0;
     
     self.userInteractionEnabled = NO;
+    self.translatesAutoresizingMaskIntoConstraints = NO;
     self.backgroundColor = UIColor.clearColor;
     
     [self _updateSubviewHierarchy];
@@ -99,6 +112,107 @@
     [self.activityIndicatorView stopAnimating];
 }
 #pragma mark -
++ (void)present; {
+    [self presentWithImage:nil progress:FLT_MAX observedProgress:nil text:nil];
+}
++ (void)presentWithImage:(UIImage *)image; {
+    [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:nil];
+}
++ (void)presentWithImage:(UIImage *)image text:(NSString *)text; {
+    [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:text];
+}
++ (void)presentSuccessImageWithText:(NSString *)text; {
+    UIImage *image = [UIImage KSO_fontAwesomeSolidImageWithString:@"\uf00c" size:kDefaultImageSize].KDI_templateImage;
+    
+    [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:text];
+    [self dismissWithDelay:kDefaultDismissDelay];
+}
++ (void)presentFailureImageWithText:(NSString *)text; {
+    UIImage *image = [UIImage KSO_fontAwesomeSolidImageWithString:@"\uf12a" size:kDefaultImageSize].KDI_templateImage;
+    
+    [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:text];
+    [self dismissWithDelay:kDefaultDismissDelay];
+}
++ (void)presentInfoImageWithText:(NSString *)text; {
+    UIImage *image = [UIImage KSO_fontAwesomeSolidImageWithString:@"\uf129" size:kDefaultImageSize].KDI_templateImage;
+    
+    [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:text];
+    [self dismissWithDelay:kDefaultDismissDelay];
+}
++ (void)presentWithProgress:(float)progress animated:(BOOL)animated; {
+    [self presentWithImage:nil progress:progress observedProgress:nil text:nil];
+}
++ (void)presentWithText:(NSString *)text; {
+    [self presentWithImage:nil progress:FLT_MAX observedProgress:nil text:text];
+}
++ (void)presentWithImage:(nullable UIImage *)image progress:(float)progress observedProgress:(nullable NSProgress *)observedProgress text:(nullable NSString *)text; {
+    KSOProgressHUDView *view = KSOProgressHUDView.currentProgressHUDViewCreateIfNecessary;
+    
+    [view.dismissTimer invalidate];
+    view.dismissTimer = nil;
+    
+    view.image = image;
+    view.text = text;
+    
+    view.progressView.observedProgress = observedProgress;
+    
+    if (observedProgress == nil &&
+        image == nil) {
+        
+        if (progress == FLT_MAX) {
+            [view startAnimating];
+            
+            view.progressView.hidden = YES;
+        }
+        else {
+            [view stopAnimating];
+            
+            view.progressView.hidden = NO;
+            [view setProgress:progress animated:YES];
+        }
+    }
+    else if (observedProgress != nil) {
+        view.progressView.hidden = NO;
+    }
+    else {
+        [view stopAnimating];
+    }
+    
+    if (view.alpha != 1.0) {
+        view.transform = CGAffineTransformMakeScale(2.0, 2.0);
+        
+        [UIView animateWithDuration:0.33 delay:0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
+            view.alpha = 1.0;
+            view.transform = CGAffineTransformIdentity;
+        } completion:nil];
+    }
+}
+#pragma mark -
++ (void)dismiss; {
+    [self dismissWithDelay:0.0];
+}
++ (void)dismissWithDelay:(NSTimeInterval)delay; {
+    KSOProgressHUDView *view = KSOProgressHUDView.currentProgressHUDView;
+    
+    void(^block)(KSTTimer *) = ^(KSTTimer *timer){
+        [UIView animateWithDuration:0.33 delay:0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
+            view.alpha = 0.0;
+            view.transform = CGAffineTransformMakeScale(2.0, 2.0);
+        } completion:^(BOOL finished) {
+            if (finished) {
+                [view removeFromSuperview];
+            }
+        }];
+    };
+    
+    if (delay > 0.0) {
+        view.dismissTimer = [KSTTimer scheduledTimerWithTimeInterval:delay block:block userInfo:nil repeats:NO queue:nil];
+    }
+    else {
+        block(nil);
+    }
+}
+#pragma mark -
 - (void)setOptions:(KSOProgressHUDViewOptions)options {
     if (_options == options) {
         return;
@@ -136,14 +250,6 @@
 }
 - (void)setProgress:(float)progress animated:(BOOL)animated; {
     [self.progressView setProgress:progress animated:animated];
-}
-#pragma mark -
-@dynamic observedProgress;
-- (NSProgress *)observedProgress {
-    return self.progressView.observedProgress;
-}
-- (void)setObservedProgress:(NSProgress *)observedProgress {
-    self.progressView.observedProgress = observedProgress;
 }
 #pragma mark -
 @dynamic text;
@@ -190,6 +296,40 @@
     self.stackView = [[UIStackView alloc] initWithFrame:CGRectZero];
 }
 #pragma mark Properties
++ (KSOProgressHUDView *)currentProgressHUDView {
+    return [KSOProgressHUDView.currentWindow.subviews.KST_reversedArray KQS_find:^BOOL(__kindof UIView * _Nonnull object, NSInteger index) {
+        return [object isKindOfClass:KSOProgressHUDView.class];
+    }];
+}
++ (KSOProgressHUDView *)currentProgressHUDViewCreateIfNecessary {
+    KSOProgressHUDView *retval = KSOProgressHUDView.currentProgressHUDView;
+    
+    if (retval == nil) {
+        retval = [[KSOProgressHUDView alloc] initWithFrame:CGRectZero];
+        retval.alpha = 0.0;
+        
+        [KSOProgressHUDView.currentWindow addSubview:retval];
+        
+        [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view]|" options:0 metrics:nil views:@{@"view": retval}]];
+        [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[view]|" options:0 metrics:nil views:@{@"view": retval}]];
+    }
+    else {
+        [retval.superview bringSubviewToFront:retval];
+    }
+    
+    return retval;
+}
++ (UIWindow *)currentWindow {
+    return [UIApplication.sharedApplication.windows KQS_find:^BOOL(__kindof UIWindow * _Nonnull object, NSInteger index) {
+        return ([object.screen isEqual:UIScreen.mainScreen] &&
+                !object.isHidden &&
+                object.alpha > 0.0 &&
+                object.windowLevel >= UIWindowLevelNormal &&
+                object.windowLevel <= UIWindowLevelNormal &&
+                object.isKeyWindow);
+    }];
+}
+#pragma mark -
 - (void)setBackgroundView:(UIView *)backgroundView {
     [_backgroundView removeFromSuperview];
     

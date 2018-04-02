@@ -7,14 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0701E3952071DF4B00CC9551 /* KSOProgressHUDViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 0701E3932071DF4B00CC9551 /* KSOProgressHUDViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		0701E3962071DF4B00CC9551 /* KSOProgressHUDViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 0701E3932071DF4B00CC9551 /* KSOProgressHUDViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		0701E3972071DF4B00CC9551 /* KSOProgressHUDViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0701E3942071DF4B00CC9551 /* KSOProgressHUDViewController.m */; };
-		0701E3982071DF4B00CC9551 /* KSOProgressHUDViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0701E3942071DF4B00CC9551 /* KSOProgressHUDViewController.m */; };
-		0701E39B2071EA1000CC9551 /* KSOProgressHUDAnimationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 0701E3992071EA1000CC9551 /* KSOProgressHUDAnimationController.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0701E39C2071EA1000CC9551 /* KSOProgressHUDAnimationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 0701E3992071EA1000CC9551 /* KSOProgressHUDAnimationController.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0701E39D2071EA1000CC9551 /* KSOProgressHUDAnimationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0701E39A2071EA1000CC9551 /* KSOProgressHUDAnimationController.m */; };
-		0701E39E2071EA1000CC9551 /* KSOProgressHUDAnimationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0701E39A2071EA1000CC9551 /* KSOProgressHUDAnimationController.m */; };
 		071AAA682067061E00240014 /* KSOProgressHUD.h in Headers */ = {isa = PBXBuildFile; fileRef = 071AAA662067061E00240014 /* KSOProgressHUD.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		071AAA71206706E000240014 /* KSOProgressHUDView.h in Headers */ = {isa = PBXBuildFile; fileRef = 071AAA6F206706E000240014 /* KSOProgressHUDView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		071AAA72206706E000240014 /* KSOProgressHUDView.m in Sources */ = {isa = PBXBuildFile; fileRef = 071AAA70206706E000240014 /* KSOProgressHUDView.m */; };
@@ -120,10 +112,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0701E3932071DF4B00CC9551 /* KSOProgressHUDViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KSOProgressHUDViewController.h; sourceTree = "<group>"; };
-		0701E3942071DF4B00CC9551 /* KSOProgressHUDViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KSOProgressHUDViewController.m; sourceTree = "<group>"; };
-		0701E3992071EA1000CC9551 /* KSOProgressHUDAnimationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KSOProgressHUDAnimationController.h; sourceTree = "<group>"; };
-		0701E39A2071EA1000CC9551 /* KSOProgressHUDAnimationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KSOProgressHUDAnimationController.m; sourceTree = "<group>"; };
 		071AAA632067061E00240014 /* KSOProgressHUD.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = KSOProgressHUD.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		071AAA662067061E00240014 /* KSOProgressHUD.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KSOProgressHUD.h; sourceTree = "<group>"; };
 		071AAA672067061E00240014 /* KSOProgressHUD-iOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "KSOProgressHUD-iOS-Info.plist"; sourceTree = "<group>"; };
@@ -226,15 +214,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0701E39F2071EA6500CC9551 /* Private */ = {
-			isa = PBXGroup;
-			children = (
-				0701E3992071EA1000CC9551 /* KSOProgressHUDAnimationController.h */,
-				0701E39A2071EA1000CC9551 /* KSOProgressHUDAnimationController.m */,
-			);
-			path = Private;
-			sourceTree = "<group>";
-		};
 		071AAA572067058700240014 = {
 			isa = PBXGroup;
 			children = (
@@ -272,9 +251,6 @@
 			children = (
 				071AAA6F206706E000240014 /* KSOProgressHUDView.h */,
 				071AAA70206706E000240014 /* KSOProgressHUDView.m */,
-				0701E3932071DF4B00CC9551 /* KSOProgressHUDViewController.h */,
-				0701E3942071DF4B00CC9551 /* KSOProgressHUDViewController.m */,
-				0701E39F2071EA6500CC9551 /* Private */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -353,10 +329,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0701E39B2071EA1000CC9551 /* KSOProgressHUDAnimationController.h in Headers */,
 				071AAA71206706E000240014 /* KSOProgressHUDView.h in Headers */,
 				071AAA682067061E00240014 /* KSOProgressHUD.h in Headers */,
-				0701E3952071DF4B00CC9551 /* KSOProgressHUDViewController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -364,10 +338,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0701E39C2071EA1000CC9551 /* KSOProgressHUDAnimationController.h in Headers */,
 				07F99CCE206A166A00BBE730 /* KSOProgressHUDView.h in Headers */,
 				07F99CCD206A166A00BBE730 /* KSOProgressHUD.h in Headers */,
-				0701E3962071DF4B00CC9551 /* KSOProgressHUDViewController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -571,8 +543,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				071AAA72206706E000240014 /* KSOProgressHUDView.m in Sources */,
-				0701E3972071DF4B00CC9551 /* KSOProgressHUDViewController.m in Sources */,
-				0701E39D2071EA1000CC9551 /* KSOProgressHUDAnimationController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -591,8 +561,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				07F99CCF206A167000BBE730 /* KSOProgressHUDView.m in Sources */,
-				0701E3982071DF4B00CC9551 /* KSOProgressHUDViewController.m in Sources */,
-				0701E39E2071EA1000CC9551 /* KSOProgressHUDAnimationController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

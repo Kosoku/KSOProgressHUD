@@ -22,4 +22,3 @@ FOUNDATION_EXPORT double KSOProgressHUDVersionNumber;
 FOUNDATION_EXPORT const unsigned char KSOProgressHUDVersionString[];
 
 #import <KSOProgressHUD/KSOProgressHUDView.h>
-#import <KSOProgressHUD/KSOProgressHUDViewController.h>

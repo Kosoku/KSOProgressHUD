@@ -142,9 +142,9 @@ static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .rig
     [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[top]-[view]" options:0 metrics:nil views:@{@"view": customImageView, @"top": defaultImageView}]];
     
     self.navigationItem.rightBarButtonItems = @[[UIBarButtonItem KDI_barButtonItemWithImage:[UIImage KSO_fontAwesomeSolidImageWithString:@"\uf070" size:kBarButtonItemImageSize].KDI_templateImage style:UIBarButtonItemStylePlain block:^(__kindof UIBarButtonItem * _Nonnull barButtonItem) {
-        [KSOProgressHUDViewController dismiss];
+        [KSOProgressHUDView dismiss];
     }],[UIBarButtonItem KDI_barButtonItemWithImage:[UIImage KSO_fontAwesomeSolidImageWithString:@"\uf06e" size:kBarButtonItemImageSize].KDI_templateImage style:UIBarButtonItemStylePlain block:^(__kindof UIBarButtonItem * _Nonnull barButtonItem) {
-        [KSOProgressHUDViewController present];
+        [KSOProgressHUDView present];
     }]];
 }
 
@@ -296,7 +296,7 @@ static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .rig
     label.translatesAutoresizingMaskIntoConstraints = NO;
     label.textColor = [backgroundView.backgroundColor KDI_contrastingColor];
     label.KDI_dynamicTypeTextStyle = UIFontTextStyleBody;
-    label.text = @"Corner Radius";
+    label.text = @"Progress";
     [label setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
     
     [stackView addArrangedSubview:label];
@@ -309,7 +309,7 @@ static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .rig
     slider.value = 0.0;
     [slider setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisHorizontal];
     [slider KDI_addBlock:^(__kindof UIControl * _Nonnull control, UIControlEvents controlEvents) {
-        [KSOProgressHUDViewController presentWithProgress:slider.value animated:YES];
+        [KSOProgressHUDView presentWithProgress:slider.value animated:YES];
     } forControlEvents:UIControlEventValueChanged];
     
     [stackView addArrangedSubview:slider];
@@ -329,7 +329,7 @@ static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .rig
     textField.placeholder = @"Enter text…";
     textField.KDI_dynamicTypeTextStyle = UIFontTextStyleBody;
     [textField KDI_addBlock:^(__kindof UIControl * _Nonnull control, UIControlEvents controlEvents) {
-        [KSOProgressHUDViewController presentWithText:textField.text];
+        [KSOProgressHUDView presentWithText:textField.text];
     } forControlEvents:UIControlEventAllEditingEvents];
     
     [backgroundView addSubview:textField];
@@ -357,13 +357,13 @@ static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .rig
     [segmentedControl KDI_addBlock:^(__kindof UIControl * _Nonnull control, UIControlEvents controlEvents) {
         switch (segmentedControl.selectedSegmentIndex) {
             case 0:
-                [KSOProgressHUDViewController presentSuccessImageWithText:@"Success!"];
+                [KSOProgressHUDView presentSuccessImageWithText:@"Success!"];
                 break;
             case 1:
-                [KSOProgressHUDViewController presentFailureImageWithText:@"Failure!"];
+                [KSOProgressHUDView presentFailureImageWithText:@"Failure!"];
                 break;
             case 2:
-                [KSOProgressHUDViewController presentInfoImageWithText:@"Info!"];
+                [KSOProgressHUDView presentInfoImageWithText:@"Info!"];
                 break;
             default:
                 break;
@@ -399,7 +399,7 @@ static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .rig
     segmentedControl.apportionsSegmentWidthsByContent = YES;
     segmentedControl.momentary = YES;
     [segmentedControl KDI_addBlock:^(__kindof UIControl * _Nonnull control, UIControlEvents controlEvents) {
-        [KSOProgressHUDViewController presentWithImage:images[segmentedControl.selectedSegmentIndex] text:@"Image!"];
+        [KSOProgressHUDView presentWithImage:images[segmentedControl.selectedSegmentIndex] text:@"Image!"];
     } forControlEvents:UIControlEventValueChanged];
     
     [backgroundView addSubview:segmentedControl];
@@ -428,11 +428,11 @@ static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .rig
     }
 }
 - (void)_updateProgressHUDWithBlock:(dispatch_block_t)block; {
-    [KSOProgressHUDViewController dismiss];
+    [KSOProgressHUDView dismiss];
     
     block();
     
-    [KSOProgressHUDViewController present];
+    [KSOProgressHUDView present];
 }
 
 @end
