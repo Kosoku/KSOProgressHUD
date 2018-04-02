@@ -1,8 +1,8 @@
 //
-//  KSOProgressHUD.h
+//  KSOProgressHUDViewController.h
 //  KSOProgressHUD
 //
-//  Created by William Towe on 3/24/18.
+//  Created by William Towe on 4/1/18.
 //  Copyright © 2018 Kosoku Interactive, LLC. All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -15,11 +15,6 @@
 
 #import <UIKit/UIKit.h>
 
-//! Project version number for KSOProgressHUD.
-FOUNDATION_EXPORT double KSOProgressHUDVersionNumber;
+@interface KSOProgressHUDViewController : UIViewController
 
-//! Project version string for KSOProgressHUD.
-FOUNDATION_EXPORT const unsigned char KSOProgressHUDVersionString[];
-
-#import <KSOProgressHUD/KSOProgressHUDView.h>
-#import <KSOProgressHUD/KSOProgressHUDViewController.h>
+@end
