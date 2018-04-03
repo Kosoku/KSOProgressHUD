@@ -205,6 +205,10 @@ static NSTimeInterval const kDefaultDismissDelay = 1.5;
 + (void)dismissAnimated:(BOOL)animated delay:(NSTimeInterval)delay view:(UIView *)view; {
     KSOProgressHUDView *progressHUDView = [KSOProgressHUDView _progressHUDViewInView:view create:NO];
     
+    if (progressHUDView == nil) {
+        return;
+    }
+    
     void(^completion)(void) = ^{
         [progressHUDView removeFromSuperview];
     };
