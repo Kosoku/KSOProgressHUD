@@ -22,6 +22,7 @@
 
 static CGSize const kDefaultImageSize = {.width=25, .height=25};
 static NSTimeInterval const kDefaultDismissDelay = 1.5;
+static NSTimeInterval const kDefaultAnimationDuration = 0.33;
 
 @interface KSOProgressHUDView ()
 
@@ -186,7 +187,7 @@ static NSTimeInterval const kDefaultDismissDelay = 1.5;
         progressHUDView.alpha = 0.0;
         progressHUDView.transform = CGAffineTransformMakeScale(2.0, 2.0);
         
-        [UIView animateWithDuration:0.33 delay:0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
+        [UIView animateWithDuration:kDefaultAnimationDuration delay:0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
             progressHUDView.alpha = 1.0;
             progressHUDView.transform = CGAffineTransformIdentity;
         } completion:nil];
@@ -214,7 +215,7 @@ static NSTimeInterval const kDefaultDismissDelay = 1.5;
     };
     void(^block)(KSTTimer *) = ^(KSTTimer *timer){
         if (animated) {
-            [UIView animateWithDuration:0.33 delay:0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
+            [UIView animateWithDuration:kDefaultAnimationDuration delay:0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
                 progressHUDView.alpha = 0.0;
                 progressHUDView.transform = CGAffineTransformMakeScale(2.0, 2.0);
             } completion:^(BOOL finished) {
