@@ -14,11 +14,15 @@
 //  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import "KSOProgressHUDView.h"
+#import "KSOProgressHUDTheme.h"
 
 #import <Ditko/Ditko.h>
 #import <KSOFontAwesomeExtensions/KSOFontAwesomeExtensions.h>
 #import <Quicksilver/Quicksilver.h>
 #import <Stanley/Stanley.h>
+
+NSNotificationName const KSOProgressHUDViewNotificationTouchesBegan = @"KSOProgressHUDViewNotificationTouchesBegan";
+NSNotificationName const KSOProgressHUDViewNotificationTouchesEnded = @"KSOProgressHUDViewNotificationTouchesEnded";
 
 static CGSize const kDefaultImageSize = {.width=25, .height=25};
 static NSTimeInterval const kDefaultDismissDelay = 1.5;
@@ -38,7 +42,6 @@ static NSTimeInterval const kDefaultAnimationDuration = 0.33;
 @property (strong,nonatomic) UIActivityIndicatorView *activityIndicatorView;
 @property (strong,nonatomic) UILabel *label;
 
-@property (readonly,nonatomic) BOOL wantsVibrancyEffect;
 @property (readonly,nonatomic) UIColor *contentBackgroundColor;
 @property (readonly,nonatomic) UIColor *contentForegroundColor;
 
@@ -58,9 +61,7 @@ static NSTimeInterval const kDefaultAnimationDuration = 0.33;
     if (!(self = [super initWithFrame:frame]))
         return nil;
     
-    _options = KSOProgressHUDViewOptionsAll;
-    _style = KSOProgressHUDViewStyleLight;
-    _contentCornerRadius = 5.0;
+    _theme = KSOProgressHUDTheme.defaultTheme;
     
     self.userInteractionEnabled = NO;
     self.translatesAutoresizingMaskIntoConstraints = NO;
@@ -69,6 +70,13 @@ static NSTimeInterval const kDefaultAnimationDuration = 0.33;
     [self _updateSubviewHierarchy];
     
     return self;
+}
+#pragma mark -
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    [NSNotificationCenter.defaultCenter postNotificationName:KSOProgressHUDViewNotificationTouchesBegan object:self];
+}
+- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    [NSNotificationCenter.defaultCenter postNotificationName:KSOProgressHUDViewNotificationTouchesEnded object:self];
 }
 #pragma mark -
 + (BOOL)requiresConstraintBasedLayout {
@@ -116,43 +124,50 @@ static NSTimeInterval const kDefaultAnimationDuration = 0.33;
 }
 #pragma mark -
 + (void)present; {
-    [self presentWithImage:nil progress:FLT_MAX observedProgress:nil text:nil view:nil];
+    [self presentWithImage:nil progress:FLT_MAX observedProgress:nil text:nil view:nil theme:nil];
+}
++ (void)presentWithTheme:(KSOProgressHUDTheme *)theme; {
+    [self presentWithImage:nil progress:FLT_MAX observedProgress:nil text:nil view:nil theme:theme];
 }
 + (void)presentWithImage:(UIImage *)image; {
-    [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:nil view:nil];
+    [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:nil view:nil theme:nil];
 }
 + (void)presentWithImage:(UIImage *)image text:(NSString *)text; {
-    [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:text view:nil];
+    [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:text view:nil theme:nil];
 }
 + (void)presentSuccessImageWithText:(NSString *)text; {
     UIImage *image = [UIImage KSO_fontAwesomeSolidImageWithString:@"\uf00c" size:kDefaultImageSize].KDI_templateImage;
     
-    [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:text view:nil];
+    [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:text view:nil theme:nil];
     [self dismissAnimated:YES delay:kDefaultDismissDelay];
 }
 + (void)presentFailureImageWithText:(NSString *)text; {
     UIImage *image = [UIImage KSO_fontAwesomeSolidImageWithString:@"\uf12a" size:kDefaultImageSize].KDI_templateImage;
     
-    [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:text view:nil];
+    [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:text view:nil theme:nil];
     [self dismissAnimated:YES delay:kDefaultDismissDelay];
 }
 + (void)presentInfoImageWithText:(NSString *)text; {
     UIImage *image = [UIImage KSO_fontAwesomeSolidImageWithString:@"\uf129" size:kDefaultImageSize].KDI_templateImage;
     
-    [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:text view:nil];
+    [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:text view:nil theme:nil];
     [self dismissAnimated:YES delay:kDefaultDismissDelay];
 }
 + (void)presentWithProgress:(float)progress animated:(BOOL)animated; {
-    [self presentWithImage:nil progress:progress observedProgress:nil text:nil view:nil];
+    [self presentWithImage:nil progress:progress observedProgress:nil text:nil view:nil theme:nil];
 }
 + (void)presentWithText:(NSString *)text; {
-    [self presentWithImage:nil progress:FLT_MAX observedProgress:nil text:text view:nil];
+    [self presentWithImage:nil progress:FLT_MAX observedProgress:nil text:text view:nil theme:nil];
 }
-+ (void)presentWithImage:(UIImage *)image progress:(float)progress observedProgress:(NSProgress *)observedProgress text:(NSString *)text view:(UIView *)view; {
++ (void)presentWithImage:(UIImage *)image progress:(float)progress observedProgress:(NSProgress *)observedProgress text:(NSString *)text view:(UIView *)view theme:(KSOProgressHUDTheme *)theme; {
     KSOProgressHUDView *progressHUDView = [KSOProgressHUDView _progressHUDViewInView:view create:YES];
     
     [progressHUDView.dismissTimer invalidate];
     progressHUDView.dismissTimer = nil;
+    
+    if (theme != nil) {
+        progressHUDView.theme = theme;
+    }
     
     progressHUDView.image = image;
     progressHUDView.text = text;
@@ -237,65 +252,14 @@ static NSTimeInterval const kDefaultAnimationDuration = 0.33;
     }
 }
 #pragma mark -
-- (void)setOptions:(KSOProgressHUDViewOptions)options {
-    if (_options == options) {
+- (void)setTheme:(KSOProgressHUDTheme *)theme {
+    if ([_theme isEqual:theme]) {
         return;
     }
     
-    _options = options;
+    _theme = theme ?: KSOProgressHUDTheme.defaultTheme;
     
     [self _updateSubviewHierarchy];
-}
-- (void)setStyle:(KSOProgressHUDViewStyle)style {
-    if (_style == style) {
-        return;
-    }
-    
-    _style = style;
-    
-    [self _updateSubviewHierarchy];
-}
-- (void)setBackgroundStyle:(KSOProgressHUDViewBackgroundStyle)backgroundStyle {
-    if (_backgroundStyle == backgroundStyle) {
-        return;
-    }
-    
-    _backgroundStyle = backgroundStyle;
-    
-    switch (_backgroundStyle) {
-        case KSOProgressHUDViewBackgroundStyleNone:
-            self.userInteractionEnabled = NO;
-            break;
-        case KSOProgressHUDViewBackgroundStyleColor:
-        case KSOProgressHUDViewBackgroundStyleCustom:
-            self.userInteractionEnabled = YES;
-            break;
-        default:
-            break;
-    }
-    
-    [self _updateSubviewHierarchy];
-}
-- (void)setBackgroundViewColor:(UIColor *)backgroundViewColor {
-    _backgroundViewColor = backgroundViewColor;
-    
-    if (self.backgroundStyle == KSOProgressHUDViewBackgroundStyleColor) {
-        self.backgroundView.backgroundColor = _backgroundViewColor;
-    }
-}
-- (void)setBackgroundViewClassName:(NSString *)backgroundViewClassName {
-    _backgroundViewClassName = [backgroundViewClassName copy];
-    
-    [self _updateSubviewHierarchy];
-}
-- (void)setContentCornerRadius:(CGFloat)contentCornerRadius {
-    if (_contentCornerRadius == contentCornerRadius) {
-        return;
-    }
-    
-    _contentCornerRadius = contentCornerRadius;
-    
-    [self.blurEffectView ?: self.contentBackgroundView setKDI_cornerRadius:_contentCornerRadius];
 }
 #pragma mark -
 @dynamic progress;
@@ -336,17 +300,19 @@ static NSTimeInterval const kDefaultAnimationDuration = 0.33;
 }
 #pragma mark *** Private Methods ***
 - (void)_updateSubviewHierarchy; {
-    switch (self.backgroundStyle) {
-        case KSOProgressHUDViewBackgroundStyleCustom:
-            if (self.backgroundViewClassName.length > 0) {
-                self.backgroundView = [[NSClassFromString(self.backgroundViewClassName) alloc] initWithFrame:CGRectZero];
+    self.userInteractionEnabled = self.theme.backgroundStyle != KSOProgressHUDBackgroundStyleNone;
+    
+    switch (self.theme.backgroundStyle) {
+        case KSOProgressHUDBackgroundStyleCustom:
+            if (self.theme.backgroundViewClass != Nil) {
+                self.backgroundView = [[self.theme.backgroundViewClass alloc] initWithFrame:CGRectZero];
             }
             break;
-        case KSOProgressHUDViewBackgroundStyleColor:
+        case KSOProgressHUDBackgroundStyleColor:
             self.backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
-            self.backgroundView.backgroundColor = self.backgroundViewColor;
+            self.backgroundView.backgroundColor = self.theme.backgroundViewColor;
             break;
-        case KSOProgressHUDViewBackgroundStyleNone:
+        case KSOProgressHUDBackgroundStyleNone:
             self.backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
             self.backgroundView.backgroundColor = UIColor.clearColor;
             break;
@@ -356,18 +322,18 @@ static NSTimeInterval const kDefaultAnimationDuration = 0.33;
         return;
     }
     
-    switch (self.style) {
-        case KSOProgressHUDViewStyleDark:
-        case KSOProgressHUDViewStyleLight:
+    switch (self.theme.style) {
+        case KSOProgressHUDStyleDark:
+        case KSOProgressHUDStyleLight:
             self.vibrancyEffectView = nil;
             self.blurEffectView = nil;
             
             self.contentBackgroundView = [[UIView alloc] initWithFrame:CGRectZero];
             break;
         default:
-            self.blurEffectView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:(UIBlurEffectStyle)self.style]];
+            self.blurEffectView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:(UIBlurEffectStyle)self.theme.style]];
             
-            if (self.wantsVibrancyEffect) {
+            if (self.theme.wantsVibrancyEffect) {
                 self.vibrancyEffectView = [[UIVisualEffectView alloc] initWithEffect:[UIVibrancyEffect effectForBlurEffect:(UIBlurEffect *)self.blurEffectView.effect]];
             }
             else {
@@ -387,7 +353,9 @@ static NSTimeInterval const kDefaultAnimationDuration = 0.33;
         return [object isKindOfClass:KSOProgressHUDView.class];
     }];
     
-    if (retval == nil) {
+    if (retval == nil &&
+        create) {
+        
         retval = [[KSOProgressHUDView alloc] initWithFrame:CGRectZero];
         
         [view addSubview:retval];
@@ -432,7 +400,7 @@ static NSTimeInterval const kDefaultAnimationDuration = 0.33;
     if (_contentBackgroundView != nil) {
         _contentBackgroundView.translatesAutoresizingMaskIntoConstraints = NO;
         _contentBackgroundView.backgroundColor = self.contentBackgroundColor;
-        _contentBackgroundView.KDI_cornerRadius = self.contentCornerRadius;
+        _contentBackgroundView.KDI_cornerRadius = self.theme.contentCornerRadius;
         
         [self.backgroundView addSubview:_contentBackgroundView];
     }
@@ -445,7 +413,7 @@ static NSTimeInterval const kDefaultAnimationDuration = 0.33;
     if (_blurEffectView != nil) {
         _blurEffectView.translatesAutoresizingMaskIntoConstraints = NO;
         _blurEffectView.layer.masksToBounds = YES;
-        _blurEffectView.KDI_cornerRadius = self.contentCornerRadius;
+        _blurEffectView.KDI_cornerRadius = self.theme.contentCornerRadius;
         
         [self.backgroundView addSubview:_blurEffectView];
     }
@@ -535,34 +503,31 @@ static NSTimeInterval const kDefaultAnimationDuration = 0.33;
     }
 }
 #pragma mark -
-- (BOOL)wantsVibrancyEffect {
-    return self.options & KSOProgressHUDViewOptionsWantsVibrancyEffect;
-}
 - (UIColor *)contentBackgroundColor {
-    switch (self.style) {
-        case KSOProgressHUDViewStyleLight:
+    switch (self.theme.style) {
+        case KSOProgressHUDStyleLight:
             return UIColor.whiteColor;
-        case KSOProgressHUDViewStyleDark:
+        case KSOProgressHUDStyleDark:
             return UIColor.blackColor;
         default:
             return UIColor.clearColor;
     }
 }
 - (UIColor *)contentForegroundColor {
-    switch (self.style) {
-        case KSOProgressHUDViewStyleLight:
-        case KSOProgressHUDViewStyleDark:
+    switch (self.theme.style) {
+        case KSOProgressHUDStyleLight:
+        case KSOProgressHUDStyleDark:
             return [self.contentBackgroundColor KDI_contrastingColor];
-        case KSOProgressHUDViewStyleBlurDark:
+        case KSOProgressHUDStyleBlurDark:
 #if (TARGET_OS_TV)
-        case KSOProgressHUDViewStyleBlurExtraDark:
+        case KSOProgressHUDStyleBlurExtraDark:
 #endif
-            return self.wantsVibrancyEffect ? nil : UIColor.whiteColor;
-        case KSOProgressHUDViewStyleBlurLight:
-        case KSOProgressHUDViewStyleBlurRegular:
-        case KSOProgressHUDViewStyleBlurProminent:
-        case KSOProgressHUDViewStyleBlurExtraLight:
-            return self.wantsVibrancyEffect ? nil : UIColor.blackColor;
+            return self.theme.wantsVibrancyEffect ? nil : UIColor.whiteColor;
+        case KSOProgressHUDStyleBlurLight:
+        case KSOProgressHUDStyleBlurRegular:
+        case KSOProgressHUDStyleBlurProminent:
+        case KSOProgressHUDStyleBlurExtraLight:
+            return self.theme.wantsVibrancyEffect ? nil : UIColor.blackColor;
     }
 }
 

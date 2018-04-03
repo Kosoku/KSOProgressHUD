@@ -17,39 +17,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_OPTIONS(NSUInteger, KSOProgressHUDViewOptions) {
-    KSOProgressHUDViewOptionsNone = 0,
-    KSOProgressHUDViewOptionsWantsVibrancyEffect = 1 << 0,
-    KSOProgressHUDViewOptionsAll = KSOProgressHUDViewOptionsWantsVibrancyEffect
-};
+FOUNDATION_EXTERN NSNotificationName const KSOProgressHUDViewNotificationTouchesBegan;
+FOUNDATION_EXTERN NSNotificationName const KSOProgressHUDViewNotificationTouchesEnded;
 
-typedef NS_ENUM(NSInteger, KSOProgressHUDViewStyle) {
-    KSOProgressHUDViewStyleLight = NSIntegerMin,
-    KSOProgressHUDViewStyleDark,
-    KSOProgressHUDViewStyleBlurExtraLight = UIBlurEffectStyleExtraLight,
-    KSOProgressHUDViewStyleBlurLight = UIBlurEffectStyleLight,
-    KSOProgressHUDViewStyleBlurDark = UIBlurEffectStyleDark,
-#if (TARGET_OS_TV)
-    KSOProgressHUDViewStyleBlurExtraDark = UIBlurEffectStyleExtraDark,
-#endif
-    KSOProgressHUDViewStyleBlurRegular = UIBlurEffectStyleRegular,
-    KSOProgressHUDViewStyleBlurProminent = UIBlurEffectStyleProminent
-};
-
-typedef NS_ENUM(NSInteger, KSOProgressHUDViewBackgroundStyle) {
-    KSOProgressHUDViewBackgroundStyleNone = 0,
-    KSOProgressHUDViewBackgroundStyleColor,
-    KSOProgressHUDViewBackgroundStyleCustom
-};
+@class KSOProgressHUDTheme;
 
 @interface KSOProgressHUDView : UIView
 
-@property (assign,nonatomic) KSOProgressHUDViewOptions options UI_APPEARANCE_SELECTOR;
-@property (assign,nonatomic) KSOProgressHUDViewStyle style UI_APPEARANCE_SELECTOR;
-@property (assign,nonatomic) KSOProgressHUDViewBackgroundStyle backgroundStyle UI_APPEARANCE_SELECTOR;
-@property (strong,nonatomic,nullable) UIColor *backgroundViewColor UI_APPEARANCE_SELECTOR;
-@property (copy,nonatomic,nullable) NSString *backgroundViewClassName UI_APPEARANCE_SELECTOR;
-@property (assign,nonatomic) CGFloat contentCornerRadius UI_APPEARANCE_SELECTOR;
+@property (strong,nonatomic,null_resettable) KSOProgressHUDTheme *theme;
 
 @property (strong,nonatomic,nullable) UIImage *image;
 
@@ -64,6 +39,7 @@ typedef NS_ENUM(NSInteger, KSOProgressHUDViewBackgroundStyle) {
 - (void)stopAnimating;
 
 + (void)present;
++ (void)presentWithTheme:(KSOProgressHUDTheme *)theme;
 + (void)presentWithImage:(UIImage *)image;
 + (void)presentWithImage:(UIImage *)image text:(NSString *)text;
 + (void)presentSuccessImageWithText:(NSString *)text;
@@ -71,7 +47,7 @@ typedef NS_ENUM(NSInteger, KSOProgressHUDViewBackgroundStyle) {
 + (void)presentInfoImageWithText:(NSString *)text;
 + (void)presentWithProgress:(float)progress animated:(BOOL)animated;
 + (void)presentWithText:(NSString *)text;
-+ (void)presentWithImage:(nullable UIImage *)image progress:(float)progress observedProgress:(nullable NSProgress *)observedProgress text:(nullable NSString *)text view:(nullable UIView *)view;
++ (void)presentWithImage:(nullable UIImage *)image progress:(float)progress observedProgress:(nullable NSProgress *)observedProgress text:(nullable NSString *)text view:(nullable UIView *)view theme:(nullable KSOProgressHUDTheme *)theme;
 
 + (void)dismiss;
 + (void)dismissAnimated:(BOOL)animated;

@@ -32,6 +32,12 @@
 		071AAAAB20673DC900240014 /* Quicksilver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 071AAAAA20673DC900240014 /* Quicksilver.framework */; };
 		071AAAAC20673DC900240014 /* Quicksilver.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 071AAAAA20673DC900240014 /* Quicksilver.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		071AAAAD20673DD300240014 /* Quicksilver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 071AAAAE20673DD300240014 /* Quicksilver.framework */; };
+		073D55B9207330D4004CB604 /* KSOProgressHUDTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = 073D55B7207330D4004CB604 /* KSOProgressHUDTheme.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		073D55BA207330D4004CB604 /* KSOProgressHUDTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = 073D55B7207330D4004CB604 /* KSOProgressHUDTheme.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		073D55BB207330D4004CB604 /* KSOProgressHUDTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = 073D55B8207330D4004CB604 /* KSOProgressHUDTheme.m */; };
+		073D55BC207330D4004CB604 /* KSOProgressHUDTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = 073D55B8207330D4004CB604 /* KSOProgressHUDTheme.m */; };
+		073D55BE2073312E004CB604 /* KSOProgressHUDDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 073D55BD2073312E004CB604 /* KSOProgressHUDDefines.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		073D55BF2073312E004CB604 /* KSOProgressHUDDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 073D55BD2073312E004CB604 /* KSOProgressHUDDefines.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		07F99CA0206A159F00BBE730 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 07F99C9F206A159F00BBE730 /* AppDelegate.m */; };
 		07F99CA3206A159F00BBE730 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 07F99CA2206A159F00BBE730 /* ViewController.m */; };
 		07F99CA6206A159F00BBE730 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 07F99CA4206A159F00BBE730 /* Main.storyboard */; };
@@ -137,6 +143,9 @@
 		071AAAA820670BE700240014 /* Stanley.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Stanley.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		071AAAAA20673DC900240014 /* Quicksilver.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Quicksilver.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		071AAAAE20673DD300240014 /* Quicksilver.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Quicksilver.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		073D55B7207330D4004CB604 /* KSOProgressHUDTheme.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KSOProgressHUDTheme.h; sourceTree = "<group>"; };
+		073D55B8207330D4004CB604 /* KSOProgressHUDTheme.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KSOProgressHUDTheme.m; sourceTree = "<group>"; };
+		073D55BD2073312E004CB604 /* KSOProgressHUDDefines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KSOProgressHUDDefines.h; sourceTree = "<group>"; };
 		07F99C8F206A145000BBE730 /* KSOProgressHUD.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = KSOProgressHUD.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		07F99C92206A145000BBE730 /* KSOProgressHUD-tvOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "KSOProgressHUD-tvOS-Info.plist"; path = "KSOProgressHUD/KSOProgressHUD-tvOS-Info.plist"; sourceTree = SOURCE_ROOT; };
 		07F99C9C206A159F00BBE730 /* Demo-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Demo-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -249,6 +258,9 @@
 		071AAA6C2067067200240014 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				073D55BD2073312E004CB604 /* KSOProgressHUDDefines.h */,
+				073D55B7207330D4004CB604 /* KSOProgressHUDTheme.h */,
+				073D55B8207330D4004CB604 /* KSOProgressHUDTheme.m */,
 				071AAA6F206706E000240014 /* KSOProgressHUDView.h */,
 				071AAA70206706E000240014 /* KSOProgressHUDView.m */,
 			);
@@ -330,6 +342,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				071AAA71206706E000240014 /* KSOProgressHUDView.h in Headers */,
+				073D55B9207330D4004CB604 /* KSOProgressHUDTheme.h in Headers */,
+				073D55BE2073312E004CB604 /* KSOProgressHUDDefines.h in Headers */,
 				071AAA682067061E00240014 /* KSOProgressHUD.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -339,6 +353,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				07F99CCE206A166A00BBE730 /* KSOProgressHUDView.h in Headers */,
+				073D55BA207330D4004CB604 /* KSOProgressHUDTheme.h in Headers */,
+				073D55BF2073312E004CB604 /* KSOProgressHUDDefines.h in Headers */,
 				07F99CCD206A166A00BBE730 /* KSOProgressHUD.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -542,6 +558,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				073D55BB207330D4004CB604 /* KSOProgressHUDTheme.m in Sources */,
 				071AAA72206706E000240014 /* KSOProgressHUDView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -560,6 +577,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				073D55BC207330D4004CB604 /* KSOProgressHUDTheme.m in Sources */,
 				07F99CCF206A167000BBE730 /* KSOProgressHUDView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

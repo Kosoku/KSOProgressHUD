@@ -25,10 +25,31 @@ static CGFloat const kCornerRadius = 5.0;
 static CGSize const kBarButtonItemImageSize = {.width=25, .height=25};
 static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .right=8};
 
+@interface GradientBackgroundView : KDIGradientView
+@property (strong,nonatomic) KDIButton *dismissButton;
+@end
+
+@implementation GradientBackgroundView
+- (instancetype)initWithFrame:(CGRect)frame {
+    if (!(self = [super initWithFrame:frame]))
+        return nil;
+    
+    CGFloat alpha = 0.7;
+    
+    self.colors = @[[KDIColorRandomRGB() colorWithAlphaComponent:alpha],
+                    [KDIColorRandomRGB() colorWithAlphaComponent:alpha],
+                    [KDIColorRandomRGB() colorWithAlphaComponent:alpha]];
+    
+    return self;
+}
+@end
+
 @interface ViewController () <KDIPickerViewButtonDataSource,KDIPickerViewButtonDelegate,UIScrollViewDelegate>
 @property (strong,nonatomic) UIScrollView *scrollView;
 @property (strong,nonatomic) KDIPickerViewButton *stylePickerViewButton;
 @property (copy,nonatomic) NSArray<NSNumber *> *styles;
+
+@property (strong,nonatomic) KSOProgressHUDTheme *theme;
 
 - (UIView *)_createVibrancyViews;
 - (UIView *)_createCornerRadiusViews;
@@ -36,26 +57,30 @@ static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .rig
 - (UIView *)_createTextViews;
 - (UIView *)_createDefaultImageViews;
 - (UIView *)_createImageViews;
-- (NSString *)_stringForStyle:(KSOProgressHUDViewStyle)style;
-- (void)_updateProgressHUDWithBlock:(dispatch_block_t)block;
+- (NSString *)_stringForStyle:(KSOProgressHUDStyle)style;
 @end
 
 @implementation ViewController
 
-- (NSString *)title {
-    return @"KSOProgressHUD";
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.styles = @[@(KSOProgressHUDViewStyleLight),
-                    @(KSOProgressHUDViewStyleDark),
-                    @(KSOProgressHUDViewStyleBlurExtraLight),
-                    @(KSOProgressHUDViewStyleBlurLight),
-                    @(KSOProgressHUDViewStyleBlurDark),
-                    @(KSOProgressHUDViewStyleBlurRegular),
-                    @(KSOProgressHUDViewStyleBlurProminent)];
+    kstWeakify(self);
+    
+    [NSNotificationCenter.defaultCenter addObserverForName:KSOProgressHUDViewNotificationTouchesEnded object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+        [KSOProgressHUDView dismiss];
+    }];
+    
+    self.theme = [KSOProgressHUDTheme.defaultTheme copy];
+    KSOProgressHUDTheme.defaultTheme = self.theme;
+    
+    self.styles = @[@(KSOProgressHUDStyleLight),
+                    @(KSOProgressHUDStyleDark),
+                    @(KSOProgressHUDStyleBlurExtraLight),
+                    @(KSOProgressHUDStyleBlurLight),
+                    @(KSOProgressHUDStyleBlurDark),
+                    @(KSOProgressHUDStyleBlurRegular),
+                    @(KSOProgressHUDStyleBlurProminent)];
     
     self.view.backgroundColor = UIColor.whiteColor;
     
@@ -143,6 +168,22 @@ static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .rig
     
     self.navigationItem.rightBarButtonItems = @[[UIBarButtonItem KDI_barButtonItemWithImage:[UIImage KSO_fontAwesomeSolidImageWithString:@"\uf070" size:kBarButtonItemImageSize].KDI_templateImage style:UIBarButtonItemStylePlain block:^(__kindof UIBarButtonItem * _Nonnull barButtonItem) {
         [KSOProgressHUDView dismiss];
+    }],[UIBarButtonItem KDI_barButtonItemWithImage:[UIImage KSO_fontAwesomeSolidImageWithString:@"\uf043" size:kBarButtonItemImageSize].KDI_templateImage style:UIBarButtonItemStylePlain block:^(__kindof UIBarButtonItem * _Nonnull barButtonItem) {
+        kstStrongify(self);
+        KSOProgressHUDTheme *theme = [self.theme copy];
+        
+        theme.backgroundStyle = KSOProgressHUDBackgroundStyleCustom;
+        theme.backgroundViewClass = GradientBackgroundView.class;
+        
+        [KSOProgressHUDView presentWithTheme:theme];
+    }],[UIBarButtonItem KDI_barButtonItemWithImage:[UIImage KSO_fontAwesomeSolidImageWithString:@"\uf042" size:kBarButtonItemImageSize].KDI_templateImage style:UIBarButtonItemStylePlain block:^(__kindof UIBarButtonItem * _Nonnull barButtonItem) {
+        kstStrongify(self);
+        KSOProgressHUDTheme *theme = [self.theme copy];
+        
+        theme.backgroundStyle = KSOProgressHUDBackgroundStyleColor;
+        theme.backgroundViewColor = KDIColorWA(0.0, 0.5);
+        
+        [KSOProgressHUDView presentWithTheme:theme];
     }],[UIBarButtonItem KDI_barButtonItemWithImage:[UIImage KSO_fontAwesomeSolidImageWithString:@"\uf06e" size:kBarButtonItemImageSize].KDI_templateImage style:UIBarButtonItemStylePlain block:^(__kindof UIBarButtonItem * _Nonnull barButtonItem) {
         [KSOProgressHUDView present];
     }]];
@@ -163,9 +204,7 @@ static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .rig
     return [NSString stringWithFormat:@"Style: %@",[self _stringForStyle:self.styles[selectedRows.firstObject.integerValue].integerValue]];
 }
 - (void)pickerViewButton:(KDIPickerViewButton *)pickerViewButton didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
-    [self _updateProgressHUDWithBlock:^{
-        KSOProgressHUDView.appearance.style = self.styles[row].integerValue;
-    }];
+    self.theme.style = self.styles[row].integerValue;
 }
 
 - (UIView *)_createVibrancyViews; {
@@ -206,18 +245,7 @@ static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .rig
     switchControl.tintColor = label.textColor;
     [switchControl KDI_addBlock:^(__kindof UIControl * _Nonnull control, UIControlEvents controlEvents) {
         kstStrongify(self);
-        [self _updateProgressHUDWithBlock:^{
-            KSOProgressHUDViewOptions options = KSOProgressHUDView.appearance.options;
-            
-            if (switchControl.isOn) {
-                options |= KSOProgressHUDViewOptionsWantsVibrancyEffect;
-            }
-            else {
-                options &= ~KSOProgressHUDViewOptionsWantsVibrancyEffect;
-            }
-            
-            KSOProgressHUDView.appearance.options = options;
-        }];
+        self.theme.wantsVibrancyEffect = switchControl.isOn;
     } forControlEvents:UIControlEventValueChanged];
     
     [stackView addArrangedSubview:switchControl];
@@ -263,9 +291,7 @@ static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .rig
     stepper.value = 5.0;
     [stepper KDI_addBlock:^(__kindof UIControl * _Nonnull control, UIControlEvents controlEvents) {
         kstStrongify(self);
-        [self _updateProgressHUDWithBlock:^{
-            KSOProgressHUDView.appearance.contentCornerRadius = stepper.value;
-        }];
+        self.theme.contentCornerRadius = stepper.value;
     } forControlEvents:UIControlEventValueChanged];
     
     [stackView addArrangedSubview:stepper];
@@ -409,30 +435,23 @@ static UIEdgeInsets const kContentEdgeInsets = {.top=8, .left=8, .bottom=8, .rig
     
     return backgroundView;
 }
-- (NSString *)_stringForStyle:(KSOProgressHUDViewStyle)style; {
+- (NSString *)_stringForStyle:(KSOProgressHUDStyle)style; {
     switch (style) {
-        case KSOProgressHUDViewStyleBlurExtraLight:
+        case KSOProgressHUDStyleBlurExtraLight:
             return @"Blur Extra Light";
-        case KSOProgressHUDViewStyleLight:
+        case KSOProgressHUDStyleLight:
             return @"Light";
-        case KSOProgressHUDViewStyleDark:
+        case KSOProgressHUDStyleDark:
             return @"Dark";
-        case KSOProgressHUDViewStyleBlurDark:
+        case KSOProgressHUDStyleBlurDark:
             return @"Blur Dark";
-        case KSOProgressHUDViewStyleBlurProminent:
+        case KSOProgressHUDStyleBlurProminent:
             return @"Blur Prominent";
-        case KSOProgressHUDViewStyleBlurLight:
+        case KSOProgressHUDStyleBlurLight:
             return @"Blur Light";
-        case KSOProgressHUDViewStyleBlurRegular:
+        case KSOProgressHUDStyleBlurRegular:
             return @"Blur Regular";
     }
-}
-- (void)_updateProgressHUDWithBlock:(dispatch_block_t)block; {
-    [KSOProgressHUDView dismissAnimated:NO];
-    
-    block();
-    
-    [KSOProgressHUDView present];
 }
 
 @end
