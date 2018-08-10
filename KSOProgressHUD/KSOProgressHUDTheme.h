@@ -18,6 +18,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ KSOProgressHUDTheme controls the appearance of a KSOProgressHUDView while it is presented.
+ */
 @interface KSOProgressHUDTheme : NSObject <NSCopying>
 
 /**
@@ -30,14 +33,63 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (readonly,copy,nonatomic) NSString *identifier;
 
+/**
+ The HUD style.
+ 
+ The default is KSOProgressHUDStyleLight.
+ 
+ @see KSOProgressHUDStyle
+ */
 @property (assign,nonatomic) KSOProgressHUDStyle style;
+/**
+ When using a HUD style that uses a UIVisualEffectView, use vibrancy in combination with that view.
+ 
+ The default is YES.
+ */
 @property (assign,nonatomic) BOOL wantsVibrancyEffect;
+/**
+ The background style.
+ 
+ The default is KSOProgressHUDBackgroundStyleNone.
+ 
+ @see KSOProgressHUDBackgroundStyle
+ */
 @property (assign,nonatomic) KSOProgressHUDBackgroundStyle backgroundStyle;
+/**
+ The font used for text. This will be used if textStyle is nil.
+ 
+ The default is [UIFont systemFontOfSize:15.0].
+ */
 @property (strong,nonatomic,null_resettable) UIFont *textFont;
+/**
+ The text style used to support dynamic type.
+ 
+ The default is UIFontTextStyleCallout.
+ */
 @property (copy,nonatomic,nullable) UIFontTextStyle textStyle;
+/**
+ The background view color to use when backgroundStyle is KSOProgressHUDBackgroundStyleColor.
+ 
+ The default is nil.
+ */
 @property (strong,nonatomic,nullable) UIColor *backgroundViewColor;
+/**
+ The background view class to use when backgroundStyle is KSOProgressHUDBackgroundStyleCustom. This must be a subclass of UIView.
+ 
+ The default is Nil.
+ */
 @property (strong,nonatomic,nullable) Class backgroundViewClass;
+/**
+ The corner radius of the HUD content view.
+ 
+ The default is 5.0.
+ */
 @property (assign,nonatomic) CGFloat contentCornerRadius;
+/**
+ The edge insets that define how much the content is inset from each edge of the HUD content view.
+ 
+ The default is UIEdgeInsetsZero, which means use the default system spacing.
+ */
 @property (assign,nonatomic) UIEdgeInsets contentEdgeInsets;
 
 /**

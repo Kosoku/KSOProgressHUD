@@ -18,22 +18,61 @@
 
 #import <UIKit/UIKit.h>
 
+/**
+ Enum describing the HUD style.
+ */
 typedef NS_ENUM(NSInteger, KSOProgressHUDStyle) {
+    /**
+     Light background with dark UI elements.
+     */
     KSOProgressHUDStyleLight = NSIntegerMin,
+    /**
+     Dark background with light UI elements.
+     */
     KSOProgressHUDStyleDark,
+    /**
+     UIVisualEffectView using UIBlurEffectStyleExtraLight style and dark UI elements.
+     */
     KSOProgressHUDStyleBlurExtraLight = UIBlurEffectStyleExtraLight,
+    /**
+     UIVisualEffectView using UIBlurEffectStyleLight style and dark UI elements.
+     */
     KSOProgressHUDStyleBlurLight = UIBlurEffectStyleLight,
+    /**
+     UIVisualEffectView using UIBlurEffectStyleDark style and light UI elements.
+     */
     KSOProgressHUDStyleBlurDark = UIBlurEffectStyleDark,
 #if (TARGET_OS_TV)
+    /**
+     UIVisualEffectView using UIBlurEffectStyleExtraDark style and light UI elements.
+     */
     KSOProgressHUDStyleBlurExtraDark = UIBlurEffectStyleExtraDark,
 #endif
+    /**
+     UIVisualEffectView using UIBlurEffectStyleRegular style and dark UI elements.
+     */
     KSOProgressHUDStyleBlurRegular = UIBlurEffectStyleRegular,
+    /**
+     UIVisualEffectView using UIBlurEffectStyleProminent style and dark UI elements.
+     */
     KSOProgressHUDStyleBlurProminent = UIBlurEffectStyleProminent
 };
 
+/**
+ Enum describing the style of background covering the remainder of the window.
+ */
 typedef NS_ENUM(NSInteger, KSOProgressHUDBackgroundStyle) {
+    /**
+     No background, user can interact with UI behind the HUD.
+     */
     KSOProgressHUDBackgroundStyleNone = 0,
+    /**
+     Solid color background (optional transparency), user cannot interact with UI behind the HUD.
+     */
     KSOProgressHUDBackgroundStyleColor,
+    /**
+     A custom background view class is provided (e.g. a gradient view), user cannot interact with UI behind the HUD.
+     */
     KSOProgressHUDBackgroundStyleCustom
 };
 

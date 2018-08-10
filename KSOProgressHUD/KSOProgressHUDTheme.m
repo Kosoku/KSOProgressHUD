@@ -61,7 +61,7 @@
     _textFont = [self.class _defaultTextFont];
     _textStyle = [self.class _defaultTextStyle];
     _contentCornerRadius = 5.0;
-    _contentEdgeInsets = UIEdgeInsetsMake(20, 20, 20, 20);
+    _contentEdgeInsets = UIEdgeInsetsZero;
     
     return self;
 }
