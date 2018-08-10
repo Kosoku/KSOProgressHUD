@@ -45,6 +45,7 @@
     retval->_backgroundViewColor = _backgroundViewColor;
     retval->_backgroundViewClass = _backgroundViewClass;
     retval->_contentCornerRadius = _contentCornerRadius;
+    retval->_contentEdgeInsets = _contentEdgeInsets;
     
     return retval;
 }
@@ -60,6 +61,7 @@
     _textFont = [self.class _defaultTextFont];
     _textStyle = [self.class _defaultTextStyle];
     _contentCornerRadius = 5.0;
+    _contentEdgeInsets = UIEdgeInsetsMake(20, 20, 20, 20);
     
     return self;
 }

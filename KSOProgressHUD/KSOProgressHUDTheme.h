@@ -38,6 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (strong,nonatomic,nullable) UIColor *backgroundViewColor;
 @property (strong,nonatomic,nullable) Class backgroundViewClass;
 @property (assign,nonatomic) CGFloat contentCornerRadius;
+@property (assign,nonatomic) UIEdgeInsets contentEdgeInsets;
 
 /**
  The designated initializer.

@@ -89,8 +89,33 @@ static NSTimeInterval const kDefaultAnimationDuration = 0.33;
         [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view(>=width)]|" options:0 metrics:@{@"width": @75.0} views:@{@"view": self.progressView}]];
     }
     
-    [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[view]-|" options:0 metrics:nil views:@{@"view": self.stackView}]];
-    [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[view]-|" options:0 metrics:nil views:@{@"view": self.stackView}]];
+    if (self.theme.contentEdgeInsets.top > 0.0) {
+        [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-top-[view]" options:0 metrics:@{@"top": @(self.theme.contentEdgeInsets.top)} views:@{@"view": self.stackView}]];
+    }
+    else {
+        [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[view]" options:0 metrics:nil views:@{@"view": self.stackView}]];
+    }
+    
+    if (self.theme.contentEdgeInsets.left > 0.0) {
+        [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-left-[view]" options:0 metrics:@{@"left": @(self.theme.contentEdgeInsets.left)} views:@{@"view": self.stackView}]];
+    }
+    else {
+        [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[view]" options:0 metrics:nil views:@{@"view": self.stackView}]];
+    }
+    
+    if (self.theme.contentEdgeInsets.bottom > 0.0) {
+        [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[view]-bottom-|" options:0 metrics:@{@"bottom": @(self.theme.contentEdgeInsets.bottom)} views:@{@"view": self.stackView}]];
+    }
+    else {
+        [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[view]-|" options:0 metrics:nil views:@{@"view": self.stackView}]];
+    }
+    
+    if (self.theme.contentEdgeInsets.right > 0.0) {
+        [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[view]-right-|" options:0 metrics:@{@"right": @(self.theme.contentEdgeInsets.right)} views:@{@"view": self.stackView}]];
+    }
+    else {
+        [temp addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[view]-|" options:0 metrics:nil views:@{@"view": self.stackView}]];
+    }
     
     UIView *contentBackgroundView = nil;
     
