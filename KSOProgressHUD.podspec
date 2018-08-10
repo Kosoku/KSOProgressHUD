@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'KSOProgressHUD'
-  s.version          = '3.32.0'
+  s.version          = '0.1.0'
   s.summary          = 'KSOProgressHUD is a replacement for the private UIProgressHUD class.'
   s.description      = <<-DESC
 KSOProgressHUD is a replacement for the private UIProgressHUD class. It supports a variety of customizations, including UIVisualEffect background views, custom background views, displaying image, text, progress, along with custom layout support.
