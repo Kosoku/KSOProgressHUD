@@ -51,7 +51,9 @@ static NSTimeInterval const kDefaultAnimationDuration = 0.33;
 @property (strong,nonatomic) KSTTimer *dismissTimer;
 
 @property (class,readonly,nonatomic) UIWindow *currentWindow;
+#if (TARGET_OS_IOS)
 @property (class,readonly,nonatomic) UINotificationFeedbackGenerator *hapticFeedbackGenerator;
+#endif
 
 - (void)_updateSubviewHierarchy;
 + (KSOProgressHUDView *)_progressHUDViewInView:(UIView *)view create:(BOOL)create;
@@ -169,7 +171,9 @@ static NSTimeInterval const kDefaultAnimationDuration = 0.33;
     [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:text view:nil theme:nil];
     [self dismissAnimated:YES delay:kDefaultDismissDelay];
     
+#if (TARGET_OS_IOS)
     [[self hapticFeedbackGenerator] notificationOccurred:UINotificationFeedbackTypeSuccess];
+#endif
 }
 + (void)presentFailureImageWithText:(NSString *)text; {
     UIImage *image = [UIImage KSO_fontAwesomeSolidImageWithString:@"\uf12a" size:kDefaultImageSize].KDI_templateImage;
@@ -177,7 +181,9 @@ static NSTimeInterval const kDefaultAnimationDuration = 0.33;
     [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:text view:nil theme:nil];
     [self dismissAnimated:YES delay:kDefaultDismissDelay];
     
+#if (TARGET_OS_IOS)
     [[self hapticFeedbackGenerator] notificationOccurred:UINotificationFeedbackTypeError];
+#endif
 }
 + (void)presentInfoImageWithText:(NSString *)text; {
     UIImage *image = [UIImage KSO_fontAwesomeSolidImageWithString:@"\uf129" size:kDefaultImageSize].KDI_templateImage;
@@ -185,7 +191,9 @@ static NSTimeInterval const kDefaultAnimationDuration = 0.33;
     [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:text view:nil theme:nil];
     [self dismissAnimated:YES delay:kDefaultDismissDelay];
     
+#if (TARGET_OS_IOS)
     [[self hapticFeedbackGenerator] notificationOccurred:UINotificationFeedbackTypeWarning];
+#endif
 }
 + (void)presentWithProgress:(float)progress animated:(BOOL)animated; {
     [self presentWithImage:nil progress:progress observedProgress:nil text:nil view:nil theme:nil];
@@ -420,6 +428,7 @@ static NSTimeInterval const kDefaultAnimationDuration = 0.33;
                 object.isKeyWindow);
     }];
 }
+#if (TARGET_OS_IOS)
 + (UINotificationFeedbackGenerator *)hapticFeedbackGenerator {
     static UINotificationFeedbackGenerator *kRetval;
     static dispatch_once_t onceToken;
@@ -428,6 +437,8 @@ static NSTimeInterval const kDefaultAnimationDuration = 0.33;
     });
     return kRetval;
 }
+#endif
+
 #pragma mark -
 - (void)setBackgroundView:(UIView *)backgroundView {
     [_backgroundView removeFromSuperview];
