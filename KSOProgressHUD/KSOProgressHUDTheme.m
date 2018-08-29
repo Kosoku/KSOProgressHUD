@@ -46,6 +46,7 @@
     retval->_backgroundViewClass = _backgroundViewClass;
     retval->_contentCornerRadius = _contentCornerRadius;
     retval->_contentEdgeInsets = _contentEdgeInsets;
+    retval->_hapticFeedbackEnabled = _hapticFeedbackEnabled;
     
     return retval;
 }

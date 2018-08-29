@@ -50,6 +50,7 @@ static NSTimeInterval const kDefaultAnimationDuration = 0.33;
 @property (strong,nonatomic) KSTTimer *dismissTimer;
 
 @property (class,readonly,nonatomic) UIWindow *currentWindow;
+@property (class,readonly,nonatomic) UINotificationFeedbackGenerator *hapticFeedbackGenerator;
 
 - (void)_updateSubviewHierarchy;
 + (KSOProgressHUDView *)_progressHUDViewInView:(UIView *)view create:(BOOL)create;
@@ -165,18 +166,24 @@ static NSTimeInterval const kDefaultAnimationDuration = 0.33;
     
     [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:text view:nil theme:nil];
     [self dismissAnimated:YES delay:kDefaultDismissDelay];
+    
+    [[self hapticFeedbackGenerator] notificationOccurred:UINotificationFeedbackTypeSuccess];
 }
 + (void)presentFailureImageWithText:(NSString *)text; {
     UIImage *image = [UIImage KSO_fontAwesomeSolidImageWithString:@"\uf12a" size:kDefaultImageSize].KDI_templateImage;
     
     [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:text view:nil theme:nil];
     [self dismissAnimated:YES delay:kDefaultDismissDelay];
+    
+    [[self hapticFeedbackGenerator] notificationOccurred:UINotificationFeedbackTypeError];
 }
 + (void)presentInfoImageWithText:(NSString *)text; {
     UIImage *image = [UIImage KSO_fontAwesomeSolidImageWithString:@"\uf129" size:kDefaultImageSize].KDI_templateImage;
     
     [self presentWithImage:image progress:FLT_MAX observedProgress:nil text:text view:nil theme:nil];
     [self dismissAnimated:YES delay:kDefaultDismissDelay];
+    
+    [[self hapticFeedbackGenerator] notificationOccurred:UINotificationFeedbackTypeWarning];
 }
 + (void)presentWithProgress:(float)progress animated:(BOOL)animated; {
     [self presentWithImage:nil progress:progress observedProgress:nil text:nil view:nil theme:nil];
@@ -404,6 +411,14 @@ static NSTimeInterval const kDefaultAnimationDuration = 0.33;
                 object.windowLevel <= UIWindowLevelNormal &&
                 object.isKeyWindow);
     }];
+}
++ (UINotificationFeedbackGenerator *)hapticFeedbackGenerator {
+    static UINotificationFeedbackGenerator *kRetval;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        kRetval = [[UINotificationFeedbackGenerator alloc] init];
+    });
+    return kRetval;
 }
 #pragma mark -
 - (void)setBackgroundView:(UIView *)backgroundView {

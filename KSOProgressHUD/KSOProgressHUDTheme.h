@@ -93,6 +93,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (assign,nonatomic) UIEdgeInsets contentEdgeInsets;
 
 /**
+ Whether haptic feedback is generated at appropriate times.
+ 
+ The default is NO.
+ */
+@property (assign,nonatomic) BOOL hapticFeedbackEnabled;
+
+/**
  The designated initializer.
  
  @param identifier The identifier of the receiver
