@@ -15,6 +15,7 @@
 
 #import "KSOProgressHUDView.h"
 #import "KSOProgressHUDTheme.h"
+#import "NSBundle+KSOProgressHUDPrivateExtensions.h"
 
 #import <Ditko/Ditko.h>
 #import <KSOFontAwesomeExtensions/KSOFontAwesomeExtensions.h>
@@ -65,6 +66,7 @@ static NSTimeInterval const kDefaultAnimationDuration = 0.33;
     _theme = KSOProgressHUDTheme.defaultTheme;
     
     self.userInteractionEnabled = NO;
+    self.isAccessibilityElement = YES;
     self.translatesAutoresizingMaskIntoConstraints = NO;
     self.backgroundColor = UIColor.clearColor;
     
@@ -203,6 +205,7 @@ static NSTimeInterval const kDefaultAnimationDuration = 0.33;
     
     progressHUDView.image = image;
     progressHUDView.text = text;
+    progressHUDView.accessibilityLabel = KSTNilIfEmptyOrObject(text) ?: NSLocalizedStringWithDefaultValue(@"accessibility-label", nil, [NSBundle KSO_progressHUDFrameworkBundle], @"Loading", @"accessibility label (Loading)");
     
     progressHUDView.observedProgress = observedProgress;
     
@@ -239,6 +242,9 @@ static NSTimeInterval const kDefaultAnimationDuration = 0.33;
             progressHUDView.transform = CGAffineTransformIdentity;
         } completion:nil];
     }
+    
+    UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
+    UIAccessibilityPostNotification(UIAccessibilityAnnouncementNotification, progressHUDView.accessibilityLabel);
 }
 #pragma mark -
 + (void)dismiss; {
@@ -331,8 +337,35 @@ static NSTimeInterval const kDefaultAnimationDuration = 0.33;
     self.imageView.hidden = image == nil;
 }
 #pragma mark *** Private Methods ***
++ (KSOProgressHUDView *)_progressHUDViewInView:(UIView *)view create:(BOOL)create; {
+    if (view == nil) {
+        view = KSOProgressHUDView.currentWindow;
+    }
+    
+    KSOProgressHUDView *retval = [view.subviews.KST_reversedArray KQS_find:^BOOL(__kindof UIView * _Nonnull object, NSInteger index) {
+        return [object isKindOfClass:KSOProgressHUDView.class];
+    }];
+    
+    if (retval == nil &&
+        create) {
+        
+        retval = [[KSOProgressHUDView alloc] initWithFrame:CGRectZero];
+        
+        [view addSubview:retval];
+        
+        [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view]|" options:0 metrics:nil views:@{@"view": retval}]];
+        [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[view]|" options:0 metrics:nil views:@{@"view": retval}]];
+    }
+    else {
+        [retval.superview bringSubviewToFront:retval];
+    }
+    
+    return retval;
+}
 - (void)_updateSubviewHierarchy; {
     self.userInteractionEnabled = self.theme.backgroundStyle != KSOProgressHUDBackgroundStyleNone;
+    self.accessibilityViewIsModal = self.theme.backgroundStyle != KSOProgressHUDBackgroundStyleNone;
+    self.accessibilityHint = self.theme.backgroundStyle == KSOProgressHUDBackgroundStyleNone ? nil : NSLocalizedStringWithDefaultValue(@"accessibility-hint", nil, [NSBundle KSO_progressHUDFrameworkBundle], @"Double tap to dismiss", @"accessibility hint (Double tap to dismiss)");
     
     switch (self.theme.backgroundStyle) {
         case KSOProgressHUDBackgroundStyleCustom:
@@ -375,31 +408,6 @@ static NSTimeInterval const kDefaultAnimationDuration = 0.33;
     }
     
     self.stackView = [[UIStackView alloc] initWithFrame:CGRectZero];
-}
-+ (KSOProgressHUDView *)_progressHUDViewInView:(UIView *)view create:(BOOL)create; {
-    if (view == nil) {
-        view = KSOProgressHUDView.currentWindow;
-    }
-    
-    KSOProgressHUDView *retval = [view.subviews.KST_reversedArray KQS_find:^BOOL(__kindof UIView * _Nonnull object, NSInteger index) {
-        return [object isKindOfClass:KSOProgressHUDView.class];
-    }];
-    
-    if (retval == nil &&
-        create) {
-        
-        retval = [[KSOProgressHUDView alloc] initWithFrame:CGRectZero];
-        
-        [view addSubview:retval];
-        
-        [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[view]|" options:0 metrics:nil views:@{@"view": retval}]];
-        [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[view]|" options:0 metrics:nil views:@{@"view": retval}]];
-    }
-    else {
-        [retval.superview bringSubviewToFront:retval];
-    }
-    
-    return retval;
 }
 #pragma mark Properties
 + (UIWindow *)currentWindow {

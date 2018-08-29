@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		070F990C21371CB10035700E /* NSBundle+KSOProgressHUDPrivateExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 070F990A21371CB10035700E /* NSBundle+KSOProgressHUDPrivateExtensions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		070F990D21371CB10035700E /* NSBundle+KSOProgressHUDPrivateExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 070F990A21371CB10035700E /* NSBundle+KSOProgressHUDPrivateExtensions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		070F990E21371CB10035700E /* NSBundle+KSOProgressHUDPrivateExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 070F990B21371CB10035700E /* NSBundle+KSOProgressHUDPrivateExtensions.m */; };
+		070F990F21371CB10035700E /* NSBundle+KSOProgressHUDPrivateExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 070F990B21371CB10035700E /* NSBundle+KSOProgressHUDPrivateExtensions.m */; };
+		070F991421371F340035700E /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 070F991221371F340035700E /* Localizable.strings */; };
+		070F991521371F340035700E /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 070F991221371F340035700E /* Localizable.strings */; };
 		071AAA682067061E00240014 /* KSOProgressHUD.h in Headers */ = {isa = PBXBuildFile; fileRef = 071AAA662067061E00240014 /* KSOProgressHUD.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		071AAA71206706E000240014 /* KSOProgressHUDView.h in Headers */ = {isa = PBXBuildFile; fileRef = 071AAA6F206706E000240014 /* KSOProgressHUDView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		071AAA72206706E000240014 /* KSOProgressHUDView.m in Sources */ = {isa = PBXBuildFile; fileRef = 071AAA70206706E000240014 /* KSOProgressHUDView.m */; };
@@ -118,6 +124,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		070F990A21371CB10035700E /* NSBundle+KSOProgressHUDPrivateExtensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSBundle+KSOProgressHUDPrivateExtensions.h"; sourceTree = "<group>"; };
+		070F990B21371CB10035700E /* NSBundle+KSOProgressHUDPrivateExtensions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+KSOProgressHUDPrivateExtensions.m"; sourceTree = "<group>"; };
+		070F991321371F340035700E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		071AAA632067061E00240014 /* KSOProgressHUD.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = KSOProgressHUD.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		071AAA662067061E00240014 /* KSOProgressHUD.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KSOProgressHUD.h; sourceTree = "<group>"; };
 		071AAA672067061E00240014 /* KSOProgressHUD-iOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "KSOProgressHUD-iOS-Info.plist"; sourceTree = "<group>"; };
@@ -223,6 +232,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		070F990921371C8B0035700E /* Private */ = {
+			isa = PBXGroup;
+			children = (
+				070F990A21371CB10035700E /* NSBundle+KSOProgressHUDPrivateExtensions.h */,
+				070F990B21371CB10035700E /* NSBundle+KSOProgressHUDPrivateExtensions.m */,
+			);
+			path = Private;
+			sourceTree = "<group>";
+		};
 		071AAA572067058700240014 = {
 			isa = PBXGroup;
 			children = (
@@ -263,6 +281,7 @@
 				073D55B8207330D4004CB604 /* KSOProgressHUDTheme.m */,
 				071AAA6F206706E000240014 /* KSOProgressHUDView.h */,
 				071AAA70206706E000240014 /* KSOProgressHUDView.m */,
+				070F990921371C8B0035700E /* Private */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -273,6 +292,7 @@
 				071AAA672067061E00240014 /* KSOProgressHUD-iOS-Info.plist */,
 				07F99C92206A145000BBE730 /* KSOProgressHUD-tvOS-Info.plist */,
 				071AAA732067071A00240014 /* KSOProgressHUD-Info.h */,
+				070F991221371F340035700E /* Localizable.strings */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -344,6 +364,7 @@
 				071AAA71206706E000240014 /* KSOProgressHUDView.h in Headers */,
 				073D55B9207330D4004CB604 /* KSOProgressHUDTheme.h in Headers */,
 				073D55BE2073312E004CB604 /* KSOProgressHUDDefines.h in Headers */,
+				070F990C21371CB10035700E /* NSBundle+KSOProgressHUDPrivateExtensions.h in Headers */,
 				071AAA682067061E00240014 /* KSOProgressHUD.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -355,6 +376,7 @@
 				07F99CCE206A166A00BBE730 /* KSOProgressHUDView.h in Headers */,
 				073D55BA207330D4004CB604 /* KSOProgressHUDTheme.h in Headers */,
 				073D55BF2073312E004CB604 /* KSOProgressHUDDefines.h in Headers */,
+				070F990D21371CB10035700E /* NSBundle+KSOProgressHUDPrivateExtensions.h in Headers */,
 				07F99CCD206A166A00BBE730 /* KSOProgressHUD.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -366,6 +388,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 071AAA692067061E00240014 /* Build configuration list for PBXNativeTarget "KSOProgressHUD-iOS" */;
 			buildPhases = (
+				070F991021371D400035700E /* genstrings */,
 				071AAA5E2067061E00240014 /* Sources */,
 				071AAA5F2067061E00240014 /* Frameworks */,
 				071AAA602067061E00240014 /* Headers */,
@@ -404,6 +427,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 07F99C96206A145000BBE730 /* Build configuration list for PBXNativeTarget "KSOProgressHUD-tvOS" */;
 			buildPhases = (
+				070F991121371D530035700E /* genstrings */,
 				07F99C8A206A145000BBE730 /* Sources */,
 				07F99C8B206A145000BBE730 /* Frameworks */,
 				07F99C8C206A145000BBE730 /* Headers */,
@@ -492,6 +516,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				070F991421371F340035700E /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -508,6 +533,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				070F991521371F340035700E /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -523,6 +549,34 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		070F991021371D400035700E /* genstrings */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = genstrings;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = scripts/./genstrings.sh;
+		};
+		070F991121371D530035700E /* genstrings */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = genstrings;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = scripts/./genstrings.sh;
+		};
 		071AAA74206707EA00240014 /* increment build number */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -558,6 +612,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				070F990E21371CB10035700E /* NSBundle+KSOProgressHUDPrivateExtensions.m in Sources */,
 				073D55BB207330D4004CB604 /* KSOProgressHUDTheme.m in Sources */,
 				071AAA72206706E000240014 /* KSOProgressHUDView.m in Sources */,
 			);
@@ -577,6 +632,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				070F990F21371CB10035700E /* NSBundle+KSOProgressHUDPrivateExtensions.m in Sources */,
 				073D55BC207330D4004CB604 /* KSOProgressHUDTheme.m in Sources */,
 				07F99CCF206A167000BBE730 /* KSOProgressHUDView.m in Sources */,
 			);
@@ -608,6 +664,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		070F991221371F340035700E /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				070F991321371F340035700E /* en */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
 		071AAA862067091000240014 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
