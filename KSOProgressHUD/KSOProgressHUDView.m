@@ -172,7 +172,9 @@ static NSTimeInterval const kDefaultAnimationDuration = 0.33;
     [self dismissAnimated:YES delay:kDefaultDismissDelay];
     
 #if (TARGET_OS_IOS)
-    [[self hapticFeedbackGenerator] notificationOccurred:UINotificationFeedbackTypeSuccess];
+    if (KSOProgressHUDTheme.defaultTheme.hapticFeedbackEnabled) {
+        [[self hapticFeedbackGenerator] notificationOccurred:UINotificationFeedbackTypeSuccess];
+    }
 #endif
 }
 + (void)presentFailureImageWithText:(NSString *)text; {
@@ -182,7 +184,9 @@ static NSTimeInterval const kDefaultAnimationDuration = 0.33;
     [self dismissAnimated:YES delay:kDefaultDismissDelay];
     
 #if (TARGET_OS_IOS)
-    [[self hapticFeedbackGenerator] notificationOccurred:UINotificationFeedbackTypeError];
+    if (KSOProgressHUDTheme.defaultTheme.hapticFeedbackEnabled) {
+        [[self hapticFeedbackGenerator] notificationOccurred:UINotificationFeedbackTypeError];
+    }
 #endif
 }
 + (void)presentInfoImageWithText:(NSString *)text; {
@@ -192,7 +196,9 @@ static NSTimeInterval const kDefaultAnimationDuration = 0.33;
     [self dismissAnimated:YES delay:kDefaultDismissDelay];
     
 #if (TARGET_OS_IOS)
-    [[self hapticFeedbackGenerator] notificationOccurred:UINotificationFeedbackTypeWarning];
+    if (KSOProgressHUDTheme.defaultTheme.hapticFeedbackEnabled) {
+        [[self hapticFeedbackGenerator] notificationOccurred:UINotificationFeedbackTypeWarning];
+    }
 #endif
 }
 + (void)presentWithProgress:(float)progress animated:(BOOL)animated; {
