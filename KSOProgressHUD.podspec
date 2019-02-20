@@ -1,13 +1,13 @@
 Pod::Spec.new do |s|
   s.name             = 'KSOProgressHUD'
-  s.version          = '0.2.1'
+  s.version          = '0.2.2'
   s.summary          = 'KSOProgressHUD is a replacement for the private UIProgressHUD class.'
   s.description      = <<-DESC
 KSOProgressHUD is a replacement for the private UIProgressHUD class. It supports a variety of customizations, including UIVisualEffect background views, custom background views, displaying image, text, progress, along with custom layout support.
                        DESC
 
   s.homepage         = 'https://github.com/Kosoku/KSOProgressHUD'
-  s.license          = { :type => 'BSD', :file => 'license.txt' }
+  s.license          = { :type => 'Apache 2.0', :file => 'license.txt' }
   s.author           = { 'William Towe' => 'willbur1984@gmail.com' }
   s.source           = { :git => 'https://github.com/Kosoku/KSOProgressHUD.git', :tag => s.version.to_s }
 
